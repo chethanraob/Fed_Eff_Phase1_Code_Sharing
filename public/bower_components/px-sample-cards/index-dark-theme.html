@@ -1,0 +1,160 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>px-sample-cards Demo</title>
+
+        <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+        <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+
+       <!-- Import style module -->
+        <link rel="import" href="../px-demo/css/px-demo-styles.html">
+        <style include="px-demo-styles" is="custom-style"></style>
+
+        <!-- Load the dark theme (default theme). -->
+        <link rel="import" href="../px-dark-theme/px-dark-theme-styles.html"> 
+        <link rel="import" href="../px-dark-demo-theme/px-dark-demo-theme-styles.html">
+        <style include="px-dark-theme-styles" is="custom-style"></style>
+        <style include="px-dark-demo-theme-styles" is="custom-style"></style>
+
+        <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+        <!-- The px javascript library & px-deck are needed for using px-deck -->
+        <script type='application/javascript' src='../px/dist/px.min.js'></script>
+        <link rel="import" href="../px-card/px-deck.html"/>
+
+        <link rel="import" href="demo-card.html"/>
+        <link rel="import" href="blank-card.html"/>
+        <link rel="import" href="gist-card.html"/>
+        <link rel="import" href="datagrid-card.html"/>
+        <link rel="import" href="toggle-card.html"/>
+        <link rel="import" href="hide-card.html"/>
+        <link rel="import" href="widgets-card.html"/>
+        <link rel="import" href="description-card.html"/>
+        <link rel="import" href="temperature-card.html"/>
+        <link rel="import" href="widget-to-widget-card.html"/>
+        <link rel="import" href="fetch-data-card.html"/>
+        <link rel="import" href="time-series-card.html"/>
+        <link rel="import" href="card-to-card.html"/>
+        <link rel="import" href="sample-card2.html"/>
+        <style media="screen">
+          .demo__title{
+            color: #425866;
+
+          }
+        </style>
+         
+    </head>
+
+    <body>
+
+        <!--
+            Note: most demos are static content, so don't use anything from the context.
+            In practice, your content is likely coming from the context, which is passed in manually
+            through px-deck or px-dashboard.
+        -->
+        <section class="demo-background--base">
+          <div class="demo-layout--center demo-u-pb+++ u-pt++ text--shadow">
+            <a class="actionable flex flex--right flex--middle" href="https://github.com/PredixDev/px-widget-cards" target="_new"><iron-icon class="menu__open" icon="fa:fa-github"></iron-icon>View on Github</a>
+                <h1 class="delta">px-sample-cards</h1>
+                <div class="demo-text-width--max">
+                <p> </p>
+                </div>
+                <div class="flex">
+                    <img class="u-mr--" src="https://img.shields.io/travis/PredixDev/px-widget-cards.svg?style=flat-square" alt="Travis"/>
+                    <img class="u-mr--" src="https://img.shields.io/bower/v/px-widget-cards.svg?style=flat-square" alt="Bower"/>
+                    <img class="u-mr--" src="https://img.shields.io/github/issues-raw/PredixDev/px-widget-cards.svg?style=flat-square" alt="Issues"/>
+                </div>
+            </div>
+        </section>
+
+        <section class="demo-background--interactive">
+          <!-- Wraps around all interactive -->
+          <article class="u-p++">
+            <p class="epsilon demo__title">Demo-card</p>
+            <px-deck context="{{context}}">
+                <demo-card id="1"></demo-card>
+            </px-deck>
+            <br/>
+
+            <p class="epsilon demo__title">Blank-card and gist-card</p>
+            <px-deck context="{{context}}">
+                <blank-card id="2"></blank-card>
+                <gist-card id="3"></gist-card>
+            </px-deck>
+            <br/>
+
+            <p class="epsilon demo__title">Datagrid-card</p>
+            <px-deck context="{{context}}">
+                <datagrid-card id="4"></datagrid-card>
+            </px-deck>
+            <br/>
+
+            <p class="epsilon demo__title">Toggle-card and hide-card</p>
+            <px-deck context="{{context}}">
+                <toggle-card id="5"></toggle-card>
+                <hide-card id="hide-card"></hide-card>
+            </px-deck>
+            <br/>
+
+            <p class="epsilon demo__title">Description-card</p>
+            <px-deck context="{{context}}">
+                <description-card id="7" head="The description" repo-url="http://github.com" body=" Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis placerat dolor. Ut pretium purus sit amet justo accumsan dignissim. Sed at libero cursus, venenatis purus vel, hendrerit libero. Pellentesque posuere lobortis elit quis pharetra. Sed ut tincidunt libero, eget cursus neque. Maecenas non mauris nec nibh ornare tristique. Sed facilisis sapien in lorem dapibus, ut bibendum nulla gravida."></description-card>
+            </px-deck>
+            <br/>
+
+            <p class="epsilon demo__title">Widgets-card</p>
+            <px-deck context="{{context}}">
+                <widgets-card id="6"></widgets-card>
+            </px-deck>
+            <br/>
+
+            <p class="epsilon demo__title">Temperature-card and widget-to-widget card</p>
+            <px-deck context="{{context}}">
+                <temperature-card id="10"></temperature-card>
+                <widget-to-widget-card id="11"></widget-to-widget-card>
+            </px-deck>
+            <br/>
+
+
+            <p class="epsilon demo__title">Card to card communication</p>
+            <px-deck context="{{context}}">
+                <card-to-card id="12"></card-to-card>
+                <card-to-card id="13"></card-to-card>
+            </px-deck>
+            <br/>
+            <px-deck context="{{context}}">
+                <sample-card2 id="14"></sample-card2>
+                <sample-card2 id="15"></sample-card2>
+            </px-deck>
+
+            <!--
+                This demo will not work outside of an Angular application at this time, since the getData
+                method is only implemented for Angular $http.
+                In an Angular application, the card can get a url from the context (this.context.url) and
+                then fetch data from that url.
+            -->
+            <!--
+            <p>fetch-data-card and time-series-card</p>
+            <px-deck context="{{context}}">
+                <fetch-data-card id="8"></fetch-data-card>
+                <time-series-card id="9"></time-series-card>
+            </px-deck>
+            -->
+          </article>
+        </section>
+        <footer class="demo-background--footer flex flex--center">
+      <div class="demo-footer__container u-pv++">
+        <div>
+          <a href="https://ge.com/digital"><img src="monogram-wdmk.png" alt="GE Monogram" class="demo-footer__img"></a>
+        </div>
+        <div class="demo-footer__list">
+          <ul class="list-inline list-inline--delimited">
+            <li><a href="http://predix.io/legal" class="demo-footer__list--lnk">Legal</a></li>
+            <li><a href="mailto:info@predix.io" class="demo-footer__list--lnk">Contact Us</a></li>
+            <li>Copyright &copy; 2015 General Electric Company. All rights reserved.</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    </body>
+</html>

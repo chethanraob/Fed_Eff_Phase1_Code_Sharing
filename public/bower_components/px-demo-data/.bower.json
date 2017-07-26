@@ -1,0 +1,27 @@
+{
+  "name": "px-demo-data",
+  "version": "0.0.21",
+  "authors": [
+    "GE"
+  ],
+  "description": "sample test data",
+  "ignore": [
+    "*.enc",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "./bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/PredixDev/px-demo-data",
+  "_release": "0.0.21",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.21",
+    "commit": "0b486511c415f04bcfaca58e5e6ed7550e41f35e"
+  },
+  "_source": "https://github.com/PredixDev/px-demo-data.git",
+  "_target": "~0.0.17",
+  "_originalSource": "px-demo-data"
+}

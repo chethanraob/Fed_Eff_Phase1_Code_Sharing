@@ -1,0 +1,1040 @@
+
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<script>
+var PxVisBehaviorChart = PxVisBehaviorChart || {};
+
+/*
+    Name:
+    PxVisBehaviorChart.chartCommonMethods
+
+    Description:
+    Polymer behavior that provides some general methods used accross charts
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.chartCommonMethods
+*/
+PxVisBehaviorChart.chartCommonMethods = {
+  /**
+  * Goes through an array of objects and gathers all unique keys. Returns a list of keys
+  *
+  * Expects and array of objects
+  *
+  * Returns an array of strings
+  */
+  _returnAllKeys: function(d) {
+    var o = {},
+        k;
+    for(var i = 0; i < d.length; i++) {
+      k = Object.keys(d[i]);
+      for(var j = 0; j < k.length; j++) {
+        o[k[j]] = true;
+      }
+    }
+    return Object.keys(o)
+  },
+
+  /**
+   * Helper function to return the correct color for a particular index.
+   **/
+  _getColor: function(i) {
+    var l = this.seriesColorOrder.length,
+        index = this._calcIndex(i,l);
+    return this.dataVisColors[this.seriesColorOrder[ index ]];
+  },
+
+  /**
+   * Helper function to calculate the index. When we run out of indcies, it loops back over valid indicies.
+   **/
+  _calcIndex: function(i,l) {
+    return i < l ? i : this._calcIndex(i - l,l);
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorChart.chartCommon
+
+    Description:
+    Polymer behavior that provides the basic listeners and methods for charts built with px-vis.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.chartCommon
+*/
+PxVisBehaviorChart.chartCommon = [{
+    properties: {
+      /**
+      * A configuration file to associate series order, name, type, and colors.
+      *
+      * Association of name, type, and seriesNumber should be developer set. Color and axis are optional.
+      *
+      *```
+      *  {
+      *     "seriesKey": {  //seriesKey is a unique identifier for the configuration
+      *         "type": "line",  //line or scatter
+      *         "markerSymbol": "diamond" //if using scatter different markerSymbol can be used. See "markerSymbol" in px-vis-scatter
+      *         "markerScale": "2" //if using scatter allows to scale the size of markers
+      *         "markerFillOpacity": "0.5" //if using scatter allows to specify the opacity of the inside of the marker
+      *         "markerStrokeOpacity": "1" //if using scatter allows to specify the opacity of the outside of the marker
+      *         "mutedOpacity": "0.3" //opacity value to use when muting a serie
+      *         "name": "My Series",  //human readable name
+      *         "x": "x",  //index or key name for independent variable
+      *         "y": "y",  //index or key name for dependent variable
+      *         "xAxisUnit": "Volt" //Unit to be used for the X axis. Can be ignored if x axis is time based
+      *         "yAxisUnit": "Oranges" //unit to be used for the Y axis.
+      *         "xMin": 0,  // minimum x value
+      *         "xMax": 100,  //maximum x value
+      *         "yMin": 5,  //minimum y value
+      *         "yMax": 50,  //maximum y value
+      *         "color": "rgb(0,0,0)", //color you want the chart
+      *         "axis": "axis1"  //axis the chart should be on
+      *     }
+      *  }
+      *```
+      */
+      seriesConfig: {
+        type: Object,
+        notify: true,
+        value: function() {
+          return {}
+        }
+      },
+      /**
+      * A default configuration file. It fills in the missing parts of seriesConfig. Any options from seriesConfig can be specified in the defaultSeriesConfig and will be automatically used if not defined in the seriesConfig
+      *
+      * Default:
+      *
+      * ```
+      *  {
+      *     "type": "line",
+      *     "x": 'x',
+      *     "xMin": "dynamic",
+      *     "xMax": "dynamic",
+      *     "yMin": 0,
+      *     "yMax": "dynamic"
+      *  }
+      * ```
+      */
+      defaultSeriesConfig: {
+        type: Object,
+        notify: true,
+        value: function() {
+          // defaultSeriesConfig[xMin] cant be Infinity by default because then we cant assign it Infinity in json.
+          return {
+            "type": "line",
+            "x": 'x',
+            "xMin": "dynamic",
+            "xMax": "dynamic",
+            "yMin": 0,
+            "yMax": "dynamic"
+          }
+        }
+      },
+      /**
+      * A boolean flag on whether to include all the series in the data.
+      * - `false`: only series defined in the seriesConfig file will be drawn
+      * - `true`: All series in the dataset will be drawn. Defaults will be used for the seriesConfig. If this is used do not specify a seriesConfig
+      */
+      includeAllSeries: {
+        type: Boolean,
+        notify: true,
+        value: false
+      },
+      /**
+       *  Representes the keys avaiable in completeSeriesConfig. It's being set
+       *  before completeSeriesConfig is set
+       */
+      _seriesKeys: {
+        type: Array
+      }
+    },
+
+    observers: [
+      '_setCompleteSeriesConfig(defaultSeriesConfig.*,chartData.*,seriesConfig.*,dataVisColors.*,seriesColorOrder.*)'
+    ],
+
+    /**
+    * Calcs the extents of the charts
+    */
+    _calcChartExts: function(mins,maxes,axis) {
+      if(this[axis + 'AxisType'] === 'ordinal') {
+        // how should someone set the ordinal list? Differet key in seriesConfig?
+        return [];
+      }
+
+      var dMin = this.defaultSeriesConfig[axis+'Min'] === 'dynamic' ? Infinity: this.defaultSeriesConfig[axis+'Min'],
+          dMax = this.defaultSeriesConfig[axis+'Max'] === 'dynamic' ? -Infinity: this.defaultSeriesConfig[axis+'Max'];
+
+      mins.push(dMin);
+      maxes.push(dMax);
+
+      return [ Math.min.apply(null, mins) , Math.max.apply(null, maxes) ];
+    },
+
+    /**
+    * Creates the real series confit object based on the default settings, the dev defined series config, and the includeAllSeries flag.
+    *
+    */
+    _setCompleteSeriesConfig: function() {
+      if(this._doesObjHaveValues(this.defaultSeriesConfig) && this._doesObjHaveValues(this.chartData) && this._doesObjHaveValues(this.dataVisColors)) {
+        // FUTURE TODO refactor: use MAPs and SETs instead of Objects when IE has support / is no longer supported by us
+        // We could use d3 sets and maps... worth it?
+        var fullConfig = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {},
+            k = Object.keys(fullConfig),
+            kLen = k.length,
+            allYs = (this.includeAllSeries) ? this._returnAllKeys(this.chartData) : [],
+            // create a new object with the y keys as config keys
+            objYs = allYs.reduce(function(obj, item) {
+              obj[item] = {};
+              return obj;
+            }, {}),
+            defaultConfigProps = Object.keys(this.defaultSeriesConfig),
+            xMins = [],
+            xMaxes = [],
+            yMins = [],
+            yMaxes = [],
+            missingYs,
+            x,
+            isUpdate = this.completeSeriesConfig ? true : false,
+            addedSeriesKeys = [],
+            removedSeriesKeys = [],
+            updatedSeriesKeys = [],
+            extsObj = {},
+            skipProperties = ['xMin','xMax','yMin','yMax'];
+
+        if(k.length === 0 && !this.includeAllSeries) {
+          console.warn("No series were added to the chart. Either add them in the seriesConfig or turn on includeAllSeries");
+          return;
+        }
+
+        // First, fill in the series specified in seriesConfig.
+        for(var i = 0; i < kLen; i++) {
+          if(!fullConfig[k[i]].hasOwnProperty('y')) {
+            console.warn("Configuration " + k[i] + " does not have a y-value associated with it. Falling back to ID");
+            fullConfig[k[i]]['y'] = k[i];
+          }
+
+          if(!fullConfig[k[i]].hasOwnProperty('x')) {
+            console.warn("Configuration " + k[i] + " does not have a x-value associated with it. Falling back to default");
+            fullConfig[k[i]]['x'] = this.defaultSeriesConfig['x'];
+          }
+
+          if(!fullConfig[k[i]]['name']) {
+            fullConfig[k[i]]['name'] = k[i];
+          }
+          if(!fullConfig[k[i]]['color']) {
+            fullConfig[k[i]]['color'] = this._getColor(i);
+          }
+
+          //copy values from default config if needed
+          for(var j=0; j<defaultConfigProps.length; j++) {
+            var property = defaultConfigProps[j];
+            //if we dont already have the property, the default exists, and we want to copy the property
+            if(typeof fullConfig[k[i]][property] === 'undefined' && typeof this.defaultSeriesConfig[property] !== 'undefined' && skipProperties.indexOf(property) === -1) {
+              fullConfig[k[i]][property] = this.defaultSeriesConfig[property];
+            }
+          }
+
+          if(fullConfig[k[i]]['xMin']) {
+            xMins.push(fullConfig[k[i]]['xMin']);
+          }
+          if(fullConfig[k[i]]['xMax']) {
+            xMaxes.push(fullConfig[k[i]]['xMax']);
+          }
+          if(fullConfig[k[i]]['yMin']) {
+            yMins.push(fullConfig[k[i]]['yMin']);
+          }
+          if(fullConfig[k[i]]['yMax']) {
+            yMaxes.push(fullConfig[k[i]]['yMax']);
+          }
+
+          // delete this y / key from objYs if includeAllSeries is on so we have a unique set
+          delete objYs[ fullConfig[k[i]]['y'] ];
+        }
+
+        // delete the 'x' key from our all y keys obj
+
+        //figure out what x is, either a config value (assuming all x are the same) or the default
+        x = (k.length > 0) ? fullConfig[k[0]]['x'] : this.defaultSeriesConfig['x'];
+        delete objYs [x];
+
+        // create a new set of whatever Ys are left so we can iterate over it
+        missingYs = Object.keys(objYs);
+        // add the missing keys to our configuration, use y as the config key by default
+        for(var i = 0; i < missingYs.length; i++) {
+          objYs[ missingYs[i] ]['type'] = this.defaultSeriesConfig['type'];
+          objYs[ missingYs[i] ]['name'] = missingYs[i];
+          objYs[ missingYs[i] ]['x'] = x;
+          objYs[ missingYs[i] ]['y'] = missingYs[i];
+          objYs[ missingYs[i] ]['color'] = this._getColor(kLen + i);
+
+          // copy the obj to our config
+          fullConfig[ missingYs[i] ] = objYs[ missingYs[i] ];
+        }
+
+        if(this.range) {
+          var min = Number(Px.moment(this.range.from, Px.moment.ISO_8601).format('x')),
+              max = Number(Px.moment(this.range.to, Px.moment.ISO_8601).format('x'));
+          extsObj["x"] = [min,max];
+        }
+
+        if(!extsObj.x) {
+          extsObj['x'] = this._calcChartExts(xMins,xMaxes,'x');
+        }
+        if(!extsObj.y) {
+          extsObj['y'] = this._calcChartExts(yMins,yMaxes,'y');
+        }
+
+        //if this is an update bof series config find out additions/deletions
+        var deletion = false,
+            addition = false,
+            mutedKeys = [];
+
+        if(isUpdate) {
+          var currKeys = Object.keys(this.completeSeriesConfig),
+              newKeys = Object.keys(fullConfig);
+
+          //process updates and additions
+          for(var i=0; i<newKeys.length; i++) {
+            if(currKeys.includes(newKeys[i])) {
+              updatedSeriesKeys.push(newKeys[i]);
+            } else {
+              addedSeriesKeys.push(newKeys[i]);
+              addition = true;
+            }
+          }
+
+          //process deletions
+          for(var i=0; i<currKeys.length; i++) {
+            if(!newKeys.includes(currKeys[i])) {
+              removedSeriesKeys.push(currKeys[i]);
+              deletion = true;
+            }
+          }
+        }
+
+        if(deletion) {
+          // check mutedSeries
+          if(this.mutedSeries) {
+            for(var i = 0; i < removedSeriesKeys.length; i++) {
+              //if it is currently muted, unmute it.
+              if(this.mutedSeries[removedSeriesKeys[i]]) {
+                this.muteUnmuteSeries(removedSeriesKeys[i]);
+                mutedKeys.push(removedSeriesKeys[i]);
+              } else if(typeof this.mutedSeries[removedSeriesKeys[i]] === 'boolean') {
+                mutedKeys.push(removedSeriesKeys[i]);
+              }
+            }
+          }
+
+          //we need to flush before setting completeSeriesConfig for deletion
+          //but need setting completeSeriesConfig before flushing for additions.
+          //Process the deletions first and we will process the addtions after setting
+          //completeseriesconfig (if needed)
+          this.set('_seriesKeys', updatedSeriesKeys);
+
+          //make sure we flush for all the components dom-repeating over _seriesKeys:
+          //if a serie needs to be removed this should be processed before we pass
+          //the new completeSeriesConfig or observers will run on the not-yet deleted serie
+          Polymer.dom.flush();
+
+          //clear out mutedSeries of the deleted stuff
+          if(mutedKeys.length > 0) {
+            for(var i = 0; i < mutedKeys.length; i++) {
+              delete this.mutedSeries[mutedKeys[i]];
+            }
+          }
+        } else {
+          //update or addition
+          this.set('_seriesKeys', Object.keys(fullConfig));
+        }
+
+        this.fire('px-vis-chart-extents', { 'dataVar': 'chartExtents', 'data': extsObj, 'method':'set' });
+        this.notifyPath('chartExtents', extsObj);
+
+        this.fire('px-vis-complete-series-config', { 'dataVar': 'completeSeriesConfig', 'data': fullConfig, 'method':'set' });
+        this.set('completeSeriesConfig', fullConfig);
+
+        if(deletion && addition) {
+          //we have processed updates and deleton, now need to process the additions
+          //now that we have the new completeSeriesConfig process the additions
+          this.set('_seriesKeys', Object.keys(fullConfig));
+        }
+
+      } else if(this.chartData && this.chartData.length === 0) {
+        this.set('_seriesKeys', []);
+        Polymer.dom.flush();
+      }
+    },
+
+    /**
+     * Helper function for the register. Returns true if the side register should exist
+     *
+     */
+    _sideRegister:function(location) {
+      return location === 'side' || location === 'both';
+    },
+
+    /**
+     * Helper function for the register. Returns true if the top register should exist
+     *
+     */
+    _topRegister:function(location) {
+      return location === 'top' || location === 'both';
+    },
+
+    /**
+     * Helper function for the line series. Returns true if the series is a line
+     *
+     */
+    _chartTypeLine: function(key,obj) {
+        return obj[key]['type'] === 'line';
+    },
+
+    /**
+     * Helper function for the line series. Returns true if the series is a line
+     *
+     */
+    _chartTypeScatter: function(key,obj) {
+      return obj[key]['type'] === 'scatter';
+    },
+
+    /**
+     * returns the keys of an object
+     *
+     */
+    _returnKeys: function(obj) {
+      return Object.keys(obj);
+    }
+}, commonColors, PxVisBehaviorChart.chartCommonMethods, PxVisBehavior.commonMethods, PxVisBehavior.completeSeriesConfig, PxVisBehavior.axisTypes];
+
+/*
+    Name:
+    PxVisBehaviorChart.saveImage
+
+    Description:
+    Polymer behavior that allows the chart to return an image of itself based on
+    its canvas and/or SVG
+
+    @polymerBehavior PxVisBehaviorChart.saveImage
+*/
+PxVisBehaviorChart.saveImage = [{
+    /**
+     * Takes a graphic "snapshot" of the component and pass results through a callback:
+     * - a canvas containing the graphical snapshot
+     * - a png base 64 data uri
+     *
+     * callback object:
+     * {
+     *  canvas: theCanvasObject
+     *  image: "data:image/png;base64;iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN..."
+     * }
+     *
+     * the data uri can be used to save the image and the canvas object to do
+     * further processing, such as combining different elements snapshot into one image
+     *
+     */
+    getImage: function(callback, renderLegend) {
+      //create a new canvas to render both the canvas and svg elements on it
+      var canvas = document.createElement('canvas'),
+          context,
+          result,
+          svgData;
+
+      canvas.width = this.width + (renderLegend ? this._getRegisterWidth() : 0);
+
+      canvas.height = this.height;
+      context = canvas.getContext('2d');
+
+      if(this.canvasContext) {
+        //draw current canvas on new canvas
+        context.drawImage(this.canvasContext.canvas, 0, 0);
+      }
+
+     if(this.pxSvgElem) {
+       //drawing the svg bit
+        this._drawSVGOnCanvas(canvas, function(resultCanvas) {
+          if(renderLegend) {
+            this._drawRegister(resultCanvas.getContext('2d'), this.width);
+          }
+          callback({canvas: resultCanvas, image: resultCanvas.toDataURL()});
+        }.bind(this));
+      } else if(this.canvasContext) {
+        //we have a canvas but no svg
+        if(renderLegend) {
+          this._drawRegister(context, this.width);
+        }
+        callback({canvas: canvas, image: canvas.toDataURL()});
+      }
+    },
+    _getRegisterWidth: function() {
+      var canvas = document.createElement('canvas');
+      canvas.height = this.height;
+      canvas.width = 9999;
+
+      var curY = 0,
+          curX = this.width + 5,
+          keys = Object.keys(this.completeSeriesConfig),
+          maxWidth = 0,
+          maxTotalWidth = 5,
+          context = canvas.getContext('2d');
+          curTextWidth = 0;
+
+      for(var i=0; i<keys.length; i++) {
+          curY += 30;
+
+          curTextWidth = context.measureText(this.completeSeriesConfig[keys[i]].name).width;
+          maxWidth = Math.max(maxWidth, curTextWidth);
+
+          if( (curY + 30) > this.height ) {
+            curX += maxWidth + 15;
+            curY = 0;
+            maxTotalWidth += maxWidth + 15;
+            maxWidth = 0;
+          }
+        }
+        maxTotalWidth += maxWidth + 15;
+
+        return maxTotalWidth;
+    },
+    /**
+     * Draws a fake representation of the registers
+     */
+    _drawRegister: function(context) {
+      var curY = 0,
+          lineLength = 25,
+          strokeWidth = 3,
+          curX = this.width + 5,
+          keys = Object.keys(this.completeSeriesConfig),
+          maxWidth = 0,
+          curTextWidth = 0;
+
+        //draw each serie
+        for(var i=0; i<keys.length; i++) {
+          curY += 30;
+
+          context.fillStyle = this.completeSeriesConfig[keys[i]].color;
+          context.fillRect(curX,curY,strokeWidth, lineLength);
+          context.fillStyle = this._checkThemeVariable("--px-vis-register-data-value", this.colors["black"]);
+          context.fillText(this.completeSeriesConfig[keys[i]].name, curX + strokeWidth + 5, curY + 10);
+          curTextWidth = context.measureText(this.completeSeriesConfig[keys[i]].name).width;
+          maxWidth = Math.max(maxWidth, curTextWidth);
+
+          if( (curY + 30) > this.height ) {
+            curX += maxWidth + 15;
+            curY = 0;
+          }
+        }
+    }
+}, PxVisBehavior.completeSeriesConfig];
+/*
+    Name:
+    PxVisBehaviorChart.precipitationPattern
+
+    Description:
+    Polymer behavior that provides precipitation pattern listeners to set properties from the chart elements.
+
+    @polymerBehavior PxVisBehaviorChart.precipitationPattern
+*/
+PxVisBehaviorChart.precipitationPattern = {
+  properties: {
+  },
+
+  listeners:{
+    'px-vis-svg-updated'              : '_updateLocalProperty',
+    'px-vis-data-updated'             : '_updateLocalProperty',
+    'px-vis-x-updated'                : '_updateLocalProperty',
+    'px-vis-y-updated'                : '_updateLocalProperty',
+    'px-vis-current-domain-x-updated' : '_updateLocalProperty',
+    'px-vis-current-domain-y-updated' : '_updateLocalProperty',
+    'px-vis-tooltip-updated'          : '_updateLocalProperty',
+    'px-vis-interaction-svg-updated'  : '_updateLocalProperty',
+    'px-vis-extents-data-updated'     : '_updateLocalProperty',
+    'px-vis-clip-path-updated'        : '_updateLocalProperty',
+    'px-vis-series-clip-path-updated' : '_updateLocalProperty',
+    'px-vis-svg-element-updated'      : '_updateLocalProperty',
+    'px-vis-domain-changed-updated'   : '_updateLocalProperty',
+    'px-vis-mouse-rect-updated'       : '_updateLocalProperty',
+
+    'px-vis-canvas-context-updated'   : '_updateGlobalProperty',
+    'px-vis-muted-series-updated'     : '_updateGlobalProperty',
+    'px-vis-selected-domain-updated'  : '_updateGlobalProperty'
+
+  },
+
+  /**
+   * Helper function that only calls _updateProperty if event originates from a child component of the chart.
+   *
+   * Events data packet must come in the form:
+   * ```
+   *  {
+   *    'dataVar': variableName,  //'chartData' or 'mutedSeries.myLineSeries'
+   *    'data': data,
+   *    'method':'set'  //any Polymer method: 'set','push', etc
+   *  }
+   *```
+   * @method _updateLocalProperty
+   * @param {event}
+   */
+  _updateLocalProperty: function(evt) {
+    var detail = evt.detail;
+    var ne = Polymer.dom(evt);
+    //check that the event is fired from a child and not another decendant.
+    if(ne.rootTarget.dataHost === this) {
+      this._updateProperty(detail);
+    }
+  },
+  /**
+   * Helper function that always calls _updateProperty regardless of origin.
+   *
+   * Events data packet must come in the form:
+   * ```
+   *  {
+   *    'dataVar': variableName,  //'chartData' or 'mutedSeries.myLineSeries'
+   *    'data': data,
+   *    'method':'set'  //any Polymer method: 'set','push', etc
+   *  }
+   *```
+   * @method _updateGlobalProperty
+   * @param {event}
+   */
+  _updateGlobalProperty: function(evt) {
+    var detail = evt.detail;
+    this._updateProperty(detail);
+  },
+  /**
+   * Generic variable updater. Triggered by events to support precipitation pattern.
+   *
+   * Events data packet must come in the form:
+   * ```
+   *  {
+   *    'dataVar': variableName,  //'chartData' or 'mutedSeries.myLineSeries'
+   *    'data': data,
+   *    'method':'set'  //any Polymer method: 'set','push', etc
+   *  }
+   *```
+   * @method _updateProperty
+   * @param {object}
+   */
+  _updateProperty: function(detail) {
+    this[detail.method](detail.dataVar, detail.data);
+    if(detail.method !== 'set') {
+      this.notifyPath(detail.dataVar,detail.data);
+    }
+  }
+
+};
+
+/**
+    Name:
+    PxVisBehaviorChart.chartAutoResize
+
+    Description:
+    Polymer behavior that provides auto resize options for charts
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.chartAutoResize
+*/
+PxVisBehaviorChart.chartAutoResize = [{
+    properties: {
+      /**
+      * Prevents the chart from automatically resizing to fit its container
+      */
+      preventResize: {
+        type: Boolean,
+        value: false,
+        observer: '_preventResizeChanged'
+      }
+    },
+    _preventResizeChanged: function() {
+      if(!this.preventResize) {
+        this.notifyResize();
+      }
+    }
+}, Polymer.IronResizableBehavior];
+
+/**
+    Name:
+    PxVisBehaviorChart.subConfiguration
+
+    Description:
+    Polymer behavior that provides subConfiguration for elements such as axes, register, etc.
+
+    Dependencies:
+
+    @polymerBehavior PxVisBehaviorChart.subConfiguration
+*/
+PxVisBehaviorChart.subConfiguration = {
+    properties: {
+    },
+    /**
+     * Applies the config object to the element. Each key in the config object
+     * is the name of the property to be applied
+     *
+     */
+    _applyConfigToElement: function(config, element) {
+
+      if(typeof(config) === 'string') {
+        config = JSON.parse(config);
+      }
+      if(typeof(config) !== 'object') {
+        console.error('Configuration object must be valid JSON: ' + config);
+        return;
+      }
+      if(!element) {
+        console.error('Cannot apply config to undefined element');
+        return;
+      }
+
+      var keys = Object.keys(config);
+      for(var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        element.set(key, config[key])
+      }
+    },
+};
+
+/**
+    Name:
+    PxVisBehaviorChart.timeFiltering
+
+    Description:
+    Polymer behavior that allows to filter chartData based on time, providing a _filteredData object
+
+    Dependencies:
+
+    @polymerBehavior PxVisBehaviorChart.timeFiltering
+*/
+PxVisBehaviorChart.timeFiltering = [{
+  properties: {
+    /**
+     * Can be used to define a time domain to be used, typically to restrain/filter the amount
+     * of data displayed. Can be used in combination with a px-vis-chart-navigator
+     */
+    timeDomain: {
+      type: Object,
+      value: function() {
+        return [];
+      }
+    },
+    /**
+     * Name of the variable holding the time stamp in the data
+     */
+    timeData: {
+      type: String,
+      value: 'Timestamp'
+    },
+    /**
+     * Data that has been time filtered
+     */
+    _filteredData: {
+      type: Object,
+      computed: '_filterData(chartData, timeDomain, timeData)'
+    }
+  },
+
+  /**
+   * returns a filtered dataset based on the time domain
+   */
+  _filterData: function(chartData, timeDomain, timeData) {
+
+    if(timeDomain.x && timeDomain.x.length === 2) {
+      var min = Number(timeDomain.x[0]),
+          max = Number(timeDomain.x[1]);
+      return chartData.filter(function(val) {
+        var timeVal = Number(val[timeData]);
+        // if the data doesn't have Date value, return the data as it is
+        if (typeof(val[timeData]) === 'undefined') {
+          return val;
+          // Otherwise return the data matching the selected time range
+        } else {
+          return (timeVal >= min && timeVal <= max);
+        }
+      });
+    } else {
+      return chartData;
+    }
+  }
+}, PxVisBehavior.dataset];
+
+/*
+    Name:
+    PxVisBehaviorChart.waitForAttach
+
+    Description:
+    Polymer behavior that provides the the ability for the chart to delay running until attached.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.waitForAttach
+*/
+PxVisBehaviorChart.waitForAttach = {
+    properties: {
+      /**
+      * Boolean holding loading until the chart is actually attached
+      */
+      _loadedOnPage: {
+        type: Boolean
+      }
+    },
+
+    /**
+     * checks if the chart is attached, otherwise waits and recalls
+     */
+    _isLoadedOnPage: function() {
+      var rect = this.getBoundingClientRect();
+      if(rect.height > 0 && rect.width > 0) {
+        this.set('_loadedOnPage', true);
+      } else {
+        this.async(this._isLoadedOnPage, 50);
+      }
+    }
+
+};
+
+/*
+    Name:
+    PxVisBehaviorChart.registerPositioning
+
+    Description:
+    Behavior allowing a chart to position its registers
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.registerPositioning
+*/
+PxVisBehaviorChart.registerPositioning = {
+  properties: {
+     /**
+      *
+      * Allows to hide the register
+      */
+    hideRegister: {
+      type: Boolean,
+      value: false,
+      observer: '_hideRegisterChanged'
+    },
+    _registerType: {
+      type: String
+    },
+    _registerWrapperClass: {
+      type: String,
+      computed: '_getRegisterWrapperClass(_registerType)'
+    }
+  },
+ /**
+  * determine the flex class on the wrapper depending on where the register is
+  */
+  _getRegisterWrapperClass: function() {
+    var classList = "flex ";
+
+    if(!this.hideRegister) {
+      if(this._registerType === 'vertical') {
+        classList += "flex--row--rev";
+      }
+      else {
+        classList += "flex--col";
+      }
+    }
+
+    return classList;
+  },
+  _hideRegisterChanged: function() {
+    this.notifyResize();
+  },
+  _getHideClass: function(hide) {
+    if(hide === true) {
+      return 'visuallyhidden';
+    }
+    return '';
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorChart.registerConfigs
+
+    Description:
+    Behavior allowing providing component config declarations
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.registerConfigs
+*/
+PxVisBehaviorChart.registerConfigs = {
+  properties: {
+    /**
+     * Configuration object used to customize the tooltip cosmetic properties.
+     * Please refer to px-vis-tooltip and px-vis-register (https://github.com/PredixDev/px-vis) for a list of supported proerties
+     *
+     */
+    tooltipConfig: {
+      type: Object,
+      notify: true
+    },
+    /**
+     * Configuration object used to customize the register cosmetic properties.
+     * Please refer to px-vis-register (https://github.com/PredixDev/px-vis) for a list of supported proerties
+     *
+     */
+    registerConfig: {
+      type: Object,
+      notify: true
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorChart.axisConfigs
+
+    Description:
+    Behavior allowing providing component config declarations
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.axisConfigs
+*/
+PxVisBehaviorChart.axisConfigs = {
+  properties: {
+    /**
+     * Configuration object used to customize the X axis cosmetic properties.
+     * Please refer to px-vis-axis (https://github.com/PredixDev/px-vis) for a list of supported properties
+     *
+     */
+    xAxisConfig: {
+      type: Object,
+      notify: true
+    },
+    /**
+     * Configuration object used to customize the Y axis cosmetic properties.
+     * Please refer to px-vis-axis (https://github.com/PredixDev/px-vis) for a list of supported properties
+     *
+     */
+    yAxisConfig: {
+      type: Object,
+      notify: true
+    }
+  }
+};
+
+
+/*
+    Name:
+    PxVisBehaviorChart.cursorConfig
+
+    Description:
+    Behavior providing the cursorConfig property
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.cursorConfig
+*/
+PxVisBehaviorChart.cursorConfig = {
+  properties: {
+    /**
+     * Configuration object used to customize the cursor properties.
+     * Please refer to px-vis-cursor (https://github.com/PredixDev/px-vis) for a list of supported proerties
+     *
+     */
+    cursorConfig: {
+      type: Object,
+      notify: true
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorChart.dataVisColorTheming
+
+    Description:
+    Behavior trying to read themed datavis color if they exists
+
+    @polymerBehavior PxVisBehaviorChart.dataVisColorTheming
+*/
+PxVisBehaviorChart.dataVisColorTheming = [{
+  ready: function() {
+
+    //we have to wait for the first animation frame to be able
+    //to access our css theming vars
+    window.requestAnimationFrame(this.recalculateTheme.bind(this));
+  },
+  /**
+   *  Call this to have the chart recalculate its datavis colors based
+   *  on a theme
+   */
+  recalculateTheme: function() {
+
+      var firstThemedColor = this.getComputedStyleValue('--px-vis-series-color-0'),
+          index = 0,
+          visColorCopy = this.dataVisColors,
+          serieOrderCopy = this.seriesColorOrder;
+
+      //we rely on the first color being defined for a theme, and then having no
+      //gaps in the number. The first "not found" number will bethe end of the themed color
+      if(firstThemedColor) {
+
+        //theme. Read colors until we can't find one anymore
+        var stop = false,
+            currentColor;
+
+        //rebuild our order
+        serieOrderCopy = [];
+        while(!stop) {
+
+
+          currentColor = this.getComputedStyleValue('--px-vis-series-color-' + index);
+
+          if(currentColor) {
+
+            //make sure we are in rgb
+            currentColor = currentColor[0] === '#' ? this._hexToRgb(currentColor) : currentColor;
+
+            //store it
+            visColorCopy['pxVisSeriesColor' + index] = currentColor;
+            serieOrderCopy.push('pxVisSeriesColor' + index);
+          } else {
+            stop = true;
+          }
+          index++;
+        }
+      } else {
+
+        //no theme, reuse colors we have with the same nomenclature as if we had
+        //a theme: pxVisSeriesColorX
+        var keys = Object.keys(visColorCopy),
+            newKeys;
+        for(index; index<keys.length; index++) {
+          visColorCopy['pxVisSeriesColor' + index] = visColorCopy[keys[index]];
+        }
+
+        //now rebuild our order with the new nomenclature
+        newKeys = Object.keys(visColorCopy);
+        var length = this.seriesColorOrder.length;
+        for(var i=0; i<length; i++) {
+          var visIndex = newKeys.indexOf(this.seriesColorOrder[i]);
+          serieOrderCopy[i] = 'pxVisSeriesColor' + visIndex;
+        }
+      }
+
+      //TODO: 2.0 BATCH update
+      this.set('dataVisColors', visColorCopy);
+      this.set('seriesColorOrder', serieOrderCopy);
+
+    }
+}, PxVisBehavior.commonMethods, commonColors];
+
+</script>

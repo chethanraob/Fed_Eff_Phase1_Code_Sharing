@@ -1,0 +1,58 @@
+{
+  "name": "px-sample-cards",
+  "version": "0.7.5",
+  "main": [
+    "px-sample-cards.html"
+  ],
+  "ignore": [
+    ".*",
+    "node_modules",
+    "bower_components",
+    "sass",
+    "HISTORY.md",
+    "CONTRIBUTING.md",
+    "OSS_Notice.pdf",
+    "scripts",
+    ".github",
+    ".editorconfig",
+    ".jshintrc",
+    ".gitignore",
+    "LICENSE.md",
+    "gulpfile.js",
+    "monogram-wdmk.png",
+    "README.md",
+    "wct.conf.json"
+  ],
+  "dependencies": {
+    "polymer": "^1.6.1",
+    "px-theme": "^2.0.1",
+    "px-widget-cards": "^2.2.0",
+    "px-simple-line-chart": "^1.6.0",
+    "px-simple-bar-chart": "^1.7.0",
+    "px-data-table": "^1.15.0",
+    "px-card": "^0.6.0",
+    "px-chart": "^1.8.2"
+  },
+  "devDependencies": {
+    "px-starter-kit-design": "^0.7.0",
+    "px-buttons-design": "^1.1.0",
+    "px-layout-design": "^0.4.0",
+    "px-forms-design": "^1.1.0",
+    "px-input-group-design": "^1.1.0",
+    "px-toggle-design": "^1.1.0",
+    "px-headings-design": "^0.3.0",
+    "px-actionable-text-icons-design": "^1.1.0",
+    "px-list-inline-design": "^0.3.0",
+    "px-demo": "^1.3.3"
+  },
+  "homepage": "https://github.com/PredixDev/px-sample-cards",
+  "_release": "0.7.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.7.5",
+    "commit": "22af560d01823f001d35b342d67b46695fd27335"
+  },
+  "_source": "https://github.com/PredixDev/px-sample-cards.git",
+  "_target": "^0.7.1",
+  "_originalSource": "px-sample-cards"
+}

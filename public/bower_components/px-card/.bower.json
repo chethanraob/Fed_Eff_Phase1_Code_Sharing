@@ -1,0 +1,44 @@
+{
+  "name": "px-card",
+  "version": "0.7.1",
+  "main": [
+    "px-card.html"
+  ],
+  "ignore": [
+    "**/.*",
+    "npm-debug.log",
+    "gulpfile.js",
+    "sass",
+    "bower_components",
+    "node_modules",
+    "test",
+    "OSS_Notice.pdf",
+    "scripts",
+    ".github",
+    "*.png",
+    "*.md"
+  ],
+  "dependencies": {
+    "polymer": "^v1.6.1",
+    "px": "~1.4.3",
+    "es6-promise": "~3.3.1",
+    "px-theme": "^2.0.1",
+    "px-polymer-font-awesome": "^1.1.0"
+  },
+  "devDependencies": {
+    "px-starter-kit-design": "^0.7.0",
+    "px-demo": "^1.2.8",
+    "px-buttons-design": "^1.1.4",
+    "px-box-design": "^0.4.2"
+  },
+  "homepage": "https://github.com/PredixDev/px-card",
+  "_release": "0.7.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.7.1",
+    "commit": "05681cd259529cb7d205d864a3a7f3ec22f5eec1"
+  },
+  "_source": "https://github.com/PredixDev/px-card.git",
+  "_target": "^0.7.0",
+  "_originalSource": "px-card"
+}

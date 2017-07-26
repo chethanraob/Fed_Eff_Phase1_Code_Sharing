@@ -1,0 +1,154 @@
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html"/>
+<link rel="import" href="../px-d3-imports/px-d3-imports.html" />
+<link rel="import" href="../px-number-formatter/px-number-formatter-behavior.html" />
+<link rel="import" href="../px-number-formatter/px-number-formatter-no-display.html" />
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html" />
+
+<!--
+Allow the user to select a value or range of values within a specified min and max.
+
+##### Usage
+
+    <px-slider value="50" min="1" max="100"></px-slider>
+
+### Styling
+The following custom properties are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--px-slider-border-color` | Border color for the unselected portion of the slider | `$gray5`
+`--px-slider-background-color` | Background color for the unselected portion of the slider | `$gray1`
+`--px-slider-border-color--selected` | Border color for the selected portion of the slider | `$select-blue-pressed`
+`--px-slider-background-color--selected` | Background color for the selected portion of the slider | `$select-blue-default`
+`--px-handle-border-color` | Border color for the slider's handle | `$gray5`
+`--px-handle-border-color--disabled` | Border color for the handle when disabled | `$gray4`
+`--px-handle-stroke-color` | Color of the small lines on the slider handle | `$gray6`
+`--px-handle-background-color` | Background color for the handle | `$white`
+`--px-handle-background-color--hover` | Background color when the handle is pressed | `$gray7`
+`--px-handle-shadow-color` | Color of the drop shadow on the slider handle | `$black`
+
+@element px-slider
+@blurb Allow the user to select a value or range of values within a specified min and max.
+@homepage index.html
+@demo index.html
+-->
+
+<link rel="import" href="css/px-slider-styles.html">
+<link rel="import" href="css/px-handle-styles.html">
+
+<dom-module id="px-slider">
+  <template>
+  <style include="px-slider-styles"></style>
+  <style include="px-handle-styles"></style>
+
+  <div id="wrapper" class="flex">
+    <template is="dom-if" if="[[_showStartInput]]">
+      <label for="inputStart" class="visuallyhidden">Value or Start Value</label>
+      <input id="inputStart"
+        type="text"
+        class="text-input flex__item--no-grow"
+        value="[[formattedStartValue]]"
+        on-change="_inputChangedStart"
+        tabindex="0"
+        disabled="{{disabled}}"
+      />
+    </template>
+    <px-number-formatter-no-display
+      id="formatterStart"
+      value="[[value]]"
+      formatted-value="{{formattedStartValue}}"
+      format="[[_format]]"
+      currency="[[currency]]"
+      culture="[[culture]]"
+      zero-format="[[zeroFormat]]">
+    </px-number-formatter-no-display>
+    <iron-a11y-keys
+      id="a11yStart"
+      target="[[_inputStart]]"
+      keys="esc"
+      on-keys-pressed="_restoreStartInputValue">
+    </iron-a11y-keys>
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      id="sliderSVG"
+      class="flex__item--no-grow u-mb"
+      overflow="hidden"
+      width$="[[_getSvgWith(_width, _margin.*)]]"
+      height$="[[_getSvgHeight(_height, _margin.*)]]">
+      <g id="sliderContainer" transform$="[[_calcTransform(_margin.*)]]">
+        <g id="backgroundTrack">
+          <rect class="backgroundTrack sliderTrack" x="0" y="0" rx="2" ry="2" width$="[[_width]]" height="10"/>
+        </g>
+        <g id="zoneBars"></g>
+        <g id="progressBar">
+          <rect class="progressBar sliderTrack" x$="[[_calcProgressStart(value, _scaleChanged, isRange)]]" y="0" rx="2" ry="2" width$="[[_calcProgressEnd(value, endValue, _scaleChanged, isRange)]]" height="10"/>
+        </g>
+
+        <g id="labelContainer">
+          <text
+            id="minLabel"
+            class="minMaxLabel"
+            text-anchor="start"
+            alignment-baseline$="[[_returnLabelBaseline(minLabelPosition)]]"
+            x="0"
+            y$="[[_returnLabelPosition(minLabelPosition)]]"
+          >{{_returnLabel(min, showLabels)}}</text>
+          <text
+            id="maxLabel"
+            class="minMaxLabel"
+            text-anchor="end"
+            alignment-baseline$="[[_returnLabelBaseline(maxLabelPosition)]]"
+            x$="[[_width]]"
+            y$="[[_returnLabelPosition(maxLabelPosition)]]"
+          >{{_returnLabel(max, showLabels)}}</text>
+        </g>
+
+        <g id="handleStart" class="handleGroup">
+          <path class="handleDropShadow"/>
+          <path class="handleBody"/>
+          <line class="handleLines" x1="-3.5" x2="-3.5"/>
+          <line class="handleLines" x1="0" x2="0"/>
+          <line class="handleLines" x1="3.5" x2="3.5"/>
+        </g>
+        <g id="handleEnd" class="handleGroup">
+          <path class="handleDropShadow"/>
+          <path class="handleBody"/>
+          <line class="handleLines" x1="-3.5" x2="-3.5"/>
+          <line class="handleLines" x1="0" x2="0"/>
+          <line class="handleLines" x1="3.5" x2="3.5"/>
+        </g>
+      </g>
+    </svg>
+
+    <template is="dom-if" if="[[_showEndInput]]">
+      <label for="inputEnd" class="visuallyhidden">End Value</label>
+      <input id="inputEnd"
+        type="text"
+        class="text-input input--tiny flex__item--no-grow"
+        value="[[formattedEndValue]]"
+        on-change="_inputChangedEnd"
+        tabindex="0"
+        disabled="{{disabled}}"/>
+    </template>
+    <px-number-formatter-no-display
+      id="formatterEnd"
+      value="[[endValue]]"
+      formatted-value="{{formattedEndValue}}"
+      format="[[_format]]"
+      currency="[[currency]]"
+      culture="[[culture]]"
+      zero-format="[[zeroFormat]]">
+    </px-number-formatter-no-display>
+    <iron-a11y-keys
+      id="a11yEnd"
+      target="[[_inputEnd]]"
+      keys="esc"
+      on-keys-pressed="_restoreEndInputValue">
+    </iron-a11y-keys>
+  </div>
+  </template>
+</dom-module>
+
+<script src="dist/px-slider.js"></script>

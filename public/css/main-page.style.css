@@ -1,0 +1,22 @@
+#mainHeader {
+    background-color: aliceblue;
+}
+
+.img-main-exelon {
+    margin-left: 10%;
+    max-height: 50px;
+    float: left;
+}
+
+.img-main-musigma {
+    margin-right: 10%;
+    max-height: 50px;
+    float: right;
+}
+
+.h3-main {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+    max-height: 50px;
+}

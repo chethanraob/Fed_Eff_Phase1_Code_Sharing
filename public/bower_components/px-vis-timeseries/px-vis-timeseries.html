@@ -1,0 +1,692 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="../px-vis/px-vis-behavior-common.html" />
+<link rel="import" href="../px-vis/px-vis-behavior-d3.html" />
+<link rel="import" href="../px-vis/px-vis-behavior-chart.html" />
+<link rel="import" href="../px-vis/px-vis-behavior-datetime.html" />
+<link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
+<link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
+<link rel="import" href="../px-vis/px-vis-line.html"/>
+<link rel="import" href="../px-vis/px-vis-scatter.html"/>
+<link rel="import" href="../px-vis/px-vis-event.html"/>
+<link rel="import" href="../px-vis/px-vis-axis.html"/>
+<link rel="import" href="../px-vis/px-vis-gridlines.html"/>
+<link rel="import" href="../px-vis/px-vis-chart-navigator.html"/>
+<link rel="import" href="../px-vis/px-vis-scale.html"/>
+<link rel="import" href="../px-vis/px-vis-interaction-space.html"/>
+<link rel="import" href="../px-vis/px-vis-cursor.html"/>
+<link rel="import" href="../px-vis/px-vis-tooltip.html"/>
+<link rel="import" href="../px-vis/px-vis-register.html"/>
+<link rel="import" href="../px-vis/px-vis-threshold.html"/>
+<link rel="import" href="../px-vis/px-vis-zoom.html"/>
+<link rel="import" href="../px-vis/px-vis-clip-path.html"/>
+
+
+<!--
+Creates an interactive timeseries chart
+
+##### Usage
+
+    <px-vis-timeseries options='{ ... }'></px-vis-timeseries>
+
+@element px-vis-timeseries
+@blurb Creates an interactive timeseries chart
+@homepage index.html
+@demo demo.html
+-->
+
+<link rel="import" type="css" href="css/px-vis-timeseries-styles.html"/>
+
+<dom-module id="px-vis-timeseries">
+  <template>
+    <style include="px-vis-timeseries-styles"></style>
+
+    <div id="wrapper" class="flex--row u-m safariFlex safariFlexDirectionRow flex wrapper" style="width:100%; height:100%">
+      <!-- Safari 8 flex needs -webkit, which autoprefixer doesn't supply, for some reason. IE10 has it's own implementation of flex which doesn't recognize flex-basis. Joy.-->
+        <div
+        class="inline--flex flex--col" style$="-webkit-flex-basis:[[width]]px;flex-basis:[[width]]px;-ms-flex-preferred-size:[[width]]px;"
+        on-mousemove="_calcMousePos">
+          <template id="topRegisterTemplate" is="dom-if" if="[[_topRegister(registerLocation)]]">
+            <px-vis-register
+              id="topRegister"
+              height="50"
+              units="[[units]]"
+              width="[[width]]"
+              type="horizontal"
+              tooltip-data=[[tooltipData]]
+              muted-series="[[mutedSeries]]"
+              complete-series-config="[[completeSeriesConfig]]"
+              chart-data="[[chartData]]"
+              x-axis-type="time">
+            </px-vis-register>
+          </template>
+          <template id="tooltipTemplate" is="dom-if" if="[[enableTooltip]]">
+            <px-vis-tooltip
+              id="tooltip"
+              hover-target=[[mouseRect]]
+              mouse-position="[[mousePosition]]"
+              width="250"
+              margin="[[margin]]"
+              chart-data="[[chartData]]"
+              tooltip-data="[[tooltipData]]"
+              complete-series-config="[[completeSeriesConfig]]"
+              x-axis-type="time"
+              tooltip-style="light"
+              muted-series="[[mutedSeries]]">
+            </px-vis-tooltip>
+          </template>
+          <px-vis-svg-canvas
+            class="inline--flex"
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]">
+          </px-vis-svg-canvas>
+
+          <template is="dom-if" if="[[!disableNavigator]]">
+            <div style="height:100px">
+              <px-vis-chart-navigator
+                id="navigator"
+                x-axis-type="time"
+                y-axis-type="linear"
+                width="[[width]]"
+                margin="[[marginNav]]"
+                default-series-config="[[defaultSeriesConfig]]"
+                series-config="[[seriesConfig]]"
+                include-all-series="[[includeAllSeries]]"
+                chart-data="[[chartData]]"
+                nav-series-limit="[[navSeriesLimit]]"
+                chart-domain-x="[[currentDomainX]]"
+                chart-domain-y="[[currentDomainY]]"
+                range="[[range]]"
+                disable-empty-render>
+              </px-vis-chart-navigator>
+            </div>
+          </template>
+        </div> <!-- flex row -->
+
+      <template id="sideRegisterTemplate" is="dom-if" if="[[_sideRegister(registerLocation)]]">
+        <px-vis-register
+          id="sideRegister"
+          height="[[height]]"
+          width="250"
+          units="[[units]]"
+          complete-series-config="[[completeSeriesConfig]]"
+          tooltip-data=[[tooltipData]]
+          muted-series="[[mutedSeries]]"
+          chart-data="[[chartData]]"
+          x-axis-type="time">
+        </px-vis-register>
+      </template>
+    </div>
+
+    <px-vis-zoom
+      id="zoom"
+      margin="[[margin]]"
+      extents-data="[[extentsData]]"
+      px-svg-elem="[[pxSvgElem]]"
+      width="[[width]]"
+      height="[[height]]">
+    </px-vis-zoom>
+    <px-vis-scale
+      x-axis-type="time"
+      y-axis-type="linear"
+      width="[[width]]"
+      height="[[height]]"
+      margin="[[margin]]"
+      chart-data="[[chartData]]"
+      complete-series-config="[[completeSeriesConfig]]"
+      chart-extents="[[chartExtents]]"
+      selected-domain="[[selectedDomain]]">
+    </px-vis-scale>
+    <px-vis-clip-path
+      svg="[[svg]]"
+      x="[[x]]"
+      y="[[y]]"
+      width="[[width]]"
+      height="[[height]]"
+      margin="[[margin]]">
+    </px-vis-clip-path>
+
+    <template is="dom-repeat" items="[[_seriesKeys]]">
+      <template is="dom-if" if="[[_chartTypeLine(item,completeSeriesConfig)]]" restamp>
+        <template is="dom-if" if="[[renderToCanvas]]" restamp>
+          <px-vis-line-canvas
+            id="lineCanvas"
+            canvas-context="[[canvasContext]]"
+            series-id="[[item]]"
+            chart-data="[[chartData]]"
+            complete-series-config="[[completeSeriesConfig]]"
+            x="[[x]]"
+            y="[[y]]"
+            domain-changed="[[domainChanged]]"
+            muted-series="[[mutedSeries]]"
+            no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]"
+            clip-path>
+          </px-vis-line-canvas>
+        </template>
+        <template is="dom-if" if="[[!renderToCanvas]]">
+          <px-vis-line
+            id="lineSVG"
+            svg="[[svg]]"
+            series-id="[[item]]"
+            chart-data="[[chartData]]"
+            complete-series-config="[[completeSeriesConfig]]"
+            x="[[x]]"
+            y="[[y]]"
+            domain-changed="[[domainChanged]]"
+            clip-path="[[seriesClipPath]]"
+            muted-series="[[mutedSeries]]">
+          </px-vis-line>
+        </template>
+      </template>
+      <template is="dom-if" if="[[_chartTypeScatter(item,completeSeriesConfig)]]" restamp>
+        <px-vis-scatter
+          svg="[[svg]]"
+          series-id="[[item]]"
+          chart-data="[[chartData]]"
+          complete-series-config="[[completeSeriesConfig]]"
+          x="[[x]]"
+          y="[[y]]"
+          current-domain-x="[[currentDomainX]]"
+          current-domain-y="[[currentDomainY]]"
+          domain-changed="[[domainChanged]]"
+          clip-path="[[seriesClipPath]]"
+          muted-series="[[mutedSeries]]">
+        </px-vis-scatter>
+      </template>
+    </template>
+
+    <template is="dom-repeat" items="[[eventData]]">
+      <px-vis-event
+        svg="[[svg]]"
+        x-axis-type="time"
+        x-key="time"
+        event-id="[[item.id]]"
+        event-data="[[item]]"
+        x="[[x]]"
+        y="[[y]]"
+        event-config="[[eventConfig]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        clip-path="[[clipPath]]">
+      </px-vis-event>
+    </template>
+
+    <px-vis-threshold
+      svg="[[svg]]"
+      complete-series-config="[[completeSeriesConfig]]"
+      chart-data="[[thresholdData]]"
+      x="[[x]]"
+      y="[[y]]"
+      current-domain-x="[[currentDomainX]]"
+      current-domain-y="[[currentDomainY]]"
+      show-threshold-box="[[showThresholdBox]]">
+    </px-vis-threshold>
+
+    <template is="dom-if" if="[[!hideGridlinesX]]" restamp>
+      <px-vis-gridlines
+        svg="[[svg]]"
+        axis="[[x]]"
+        margin="[[margin]]"
+        length="[[height]]"
+        orientation="bottom"
+        current-domain="[[currentDomainX]]"
+        domain-changed="[[domainChanged]]">
+      </px-vis-gridlines>
+    </template>
+
+    <template is="dom-if" if="[[!hideGridlinesY]]" restamp>
+      <px-vis-gridlines
+        svg="[[svg]]"
+        axis="[[y]]"
+        margin="[[margin]]"
+        length="[[width]]"
+        orientation="left"
+        current-domain="[[currentDomainY]]"
+        domain-changed="[[domainChanged]]">
+      </px-vis-gridlines>
+    </template>
+
+    <px-vis-axis
+      id="xAxis"
+      svg="[[svg]]"
+      axis="[[x]]"
+      axis-type="time"
+      margin="[[margin]]"
+      width="[[width]]"
+      height="[[height]]"
+      orientation="bottom"
+      label-position="after"
+      complete-series-config="[[completeSeriesConfig]]"
+      prevent-series-bar
+      domain-changed="[[domainChanged]]"
+      current-domain="[[currentDomainX]]">
+    </px-vis-axis>
+    <px-vis-axis
+      id="yAxis"
+      svg="[[svg]]"
+      axis="[[y]]"
+      axis-type="linear"
+      margin="[[margin]]"
+      width="[[width]]"
+      height="[[height]]"
+      orientation="left"
+      complete-series-config="[[completeSeriesConfig]]"
+      muted-series=[[mutedSeries]]
+      domain-changed="[[domainChanged]]"
+      current-domain="[[currentDomainY]]">
+    </px-vis-axis>
+
+    <px-vis-interaction-space
+      svg="[[svg]]"
+      width="[[width]]"
+      height="[[height]]"
+      margin="[[margin]]"
+      x-axis-type="time"
+      series-keys="[[_seriesKeys]]"
+      complete-series-config="[[completeSeriesConfig]]"
+      chart-data="[[chartData]]"
+      x="[[x]]"
+      y="[[y]]"
+      current-domain-x="[[currentDomainX]]"
+      current-domain-y="[[currentDomainY]]"
+      selection-type=[[selectionType]]>
+    </px-vis-interaction-space>
+
+    <px-vis-cursor
+      svg="[[svg]]"
+      width="[[width]]"
+      height="[[height]]"
+      margin="[[margin]]"
+      complete-series-config="[[completeSeriesConfig]]"
+      chart-data="[[chartData]]"
+      horizontal-line="full"
+      vertical-line="full"
+      circle-point="yes"
+      tooltip-data="[[tooltipData]]"
+      clip-path="[[seriesClipPath]]">
+    </px-vis-cursor>
+  </template>
+</dom-module>
+
+<script>
+    Polymer({
+
+        is: 'px-vis-timeseries',
+
+        behaviors: [
+          PxVisBehavior.sizing,
+          PxVisBehavior.formatting,
+          PxVisBehavior.dataset,
+          PxVisBehavior.completeSeriesConfig,
+          PxVisBehavior.muteUnmuteSeries,
+          PxVisBehavior.tooltipData,
+          PxVisBehavior.extentsData,
+          PxVisBehavior.commonMethods,
+          PxVisBehavior.axisTypes,
+          PxVisBehavior.zoomSelection,
+          PxVisBehavior.chartExtents,
+          PxVisBehavior.events,
+          PxVisBehaviorTime.datetime,
+          PxVisBehaviorD3.svg,
+          PxVisBehaviorD3.canvas,
+          PxVisBehaviorD3.axes,
+          PxVisBehaviorD3.axis,
+          PxVisBehaviorD3.selectedTimeDomain,
+          PxVisBehaviorD3.interaction,
+          PxVisBehaviorD3.clipPath,
+          PxVisBehaviorD3.axisConfig,
+          PxVisBehaviorChart.chartCommon,
+          PxVisBehaviorChart.precipitationPattern,
+          Polymer.IronResizableBehavior,
+          PxVisBehaviorChart.saveImage,
+          PxVisBehaviorD3.domainUpdate,
+          PxVisBehaviorChart.subConfiguration,
+          PxVisBehavior.progressiveRendering,
+          PxVisBehaviorChart.registerConfigs,
+          PxVisBehaviorChart.axisConfigs,
+          PxVisBehaviorChart.dataVisColorTheming
+        ],
+
+        /**
+         * Properties block, expose attribute values to the DOM via 'reflect'
+         *
+         * @property properties
+         * @type Object
+         */
+        properties: {
+          /**
+           *
+           *
+           *
+           * @type Array
+           */
+          series:{
+            type:Array
+          },
+          /**
+           *
+           * @type Array
+           */
+          events:{
+            type:Array
+          },
+          /**
+           *
+           *
+           *
+           * @type Array
+           */
+          thresholds:{
+            type:Array
+          },
+          /**
+           * Defines where to locate the X-axis.
+           * - `bottom`
+           * - `top`
+           *
+           * @property xAxisLocation
+           * @type String
+           * @default bottom
+           */
+          xAxisLocation:{
+            type:String,
+            value:'bottom'
+          },
+          /**
+           * Defines where to locate the Y-axis.
+           * - `left`
+           * - `right`
+           *
+           * @property yAxisLocation
+           * @type String
+           * @default left
+           */
+          yAxisLocation:{
+            type:String,
+            value:'left'
+          },
+          /**
+           * Defines the base margin for the navigator.
+           *
+           * @property marginNav
+           * @type Object
+           * @default { top: 5, right: 5, bottom: 5, left: 5}
+           * @private
+           */
+          marginNav:{
+            type:Object,
+            value: { top: 5, right: 5, bottom: 5, left: 5},
+          },
+          /**
+           * Defines where the register will appear. Valid entries are`:
+           * - 'none'
+           * - 'top'
+           * - 'side'
+           * - 'both'
+           *
+           * @property registerLocation
+           * @type string
+           * @default side
+          */
+          registerLocation:{
+            type:String,
+            value:'side'
+          },
+          /**
+           * Configuration object for the chart. Key is the property name.
+           *
+           * @property options
+           * @type Object
+          */
+          options:{
+            type:Object,
+            notify:true,
+            observer:'_setConfig'
+          },
+          /**
+           * container for the data object that drives the thresholds
+           * Generally loaded with an iron-ajax tag (but doesnt have to be)
+           * This can be set declaratively
+           *
+           * @property thresholdData
+           * @type Object
+           */
+          thresholdData:{
+            type: Array,
+            notify: true
+          },
+          /**
+           * container for the data object that drives the events
+           * Generally loaded with an iron-ajax tag (but doesnt have to be)
+           * This can be set declaratively
+           *
+           * @property eventData
+           * @type Object
+           */
+          eventData:{
+            type: Array,
+            notify: true
+          },
+          /**
+           * Boolean to turn the on-chart tooltip on or off
+           *
+           * @property enableTooltip
+           * @type Boolean
+           */
+          enableTooltip: {
+            type: Boolean,
+            notify: true,
+            value: false
+          },
+          /**
+           * Boolean to enable or disable auto-resizing
+           *
+           * @property preventResize
+           * @type Boolean
+           */
+          preventResize: {
+            type: Boolean,
+            value: false
+          },
+          pxSvgElem : {
+            type: Object,
+            value: function() { return {};}
+          },
+          /**
+           * Flag to not show a navigator in the timeseries. Set to true to disable the navigator. Default false which shows the navigator
+           *
+           */
+          disableNavigator: {
+            type: Boolean,
+            value: false
+          },
+
+          mousePosition:{
+            type: Array
+          },
+          renderToCanvas: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Whether to hide the gridlines perpendicular to the X axis
+           */
+          hideGridlinesX: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Whether to hide the gridlines perpendicular to the Y axis
+           */
+          hideGridlinesY: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        observers: [
+          '_xAxisConfigChanged(xAxisConfig.*)',
+          '_yAxisConfigChanged(yAxisConfig.*)',
+          '_tooltipConfigChanged(tooltipConfig.*, enableTooltip)',
+          '_registerConfigChanged(registerConfig.*, registerLocation)',
+          '_chartDataChanged(chartData.*)'
+        ],
+
+        listeners: {
+          'iron-resize': '_onIronResize'
+        },
+
+        ready:function() {
+          this._calcMargins();
+        },
+
+        _calcMousePos: function(evt) {
+          this.set('mousePosition',[evt.pageX,evt.pageY]);
+        },
+
+        /**
+         * Cycles through the Configuration object and sets each property. Triggers each components declarative binding
+         *
+         * @method _setConfig
+         */
+        _setConfig: function() {
+          if(typeof(this.options) !== 'object') {
+            console.error('Configuration options must be valid JSON');
+            return;
+          }
+
+          var keys = Object.keys(this.options);
+          for(var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            this.set(key, this.options[key]);
+          }
+        },
+        _xAxisConfigChanged: function(conf) {
+          this._applyConfigToElement(this.xAxisConfig, this.$.xAxis);
+        },
+        _yAxisConfigChanged: function(conf) {
+          this._applyConfigToElement(this.yAxisConfig, this.$.yAxis);
+        },
+        _tooltipConfigChanged: function(conf) {
+          if(this.$$('#tooltip')) {
+            this._applyConfigToElement(this.tooltipConfig, this.$$('#tooltip'));
+          } else if(!this.$$('#tooltip') && this.enableTooltip) {
+            this.$.tooltipTemplate.render();
+            this._applyConfigToElement(this.tooltipConfig, this.$$('#tooltip'));
+          }
+        },
+        _registerConfigChanged: function(conf) {
+
+          if(this.$$('#topRegister')) {
+            this._applyConfigToElement(this.registerConfig, this.$$('#topRegister'));
+          } else if(!this.$$('#topRegister') && (this.registerLocation === 'top' || this.registerLocation === 'both')) {
+            this.$.topRegisterTemplate.render();
+            this._applyConfigToElement(this.registerConfig, this.$$('#topRegister'));
+          }
+
+          if(this.$$('#sideRegister')) {
+            this._applyConfigToElement(this.registerConfig, this.$$('#sideRegister'));
+          } else if(!this.$$('#sideRegister') && (this.registerLocation === 'side' || this.registerLocation === 'both')) {
+            this.$.sideRegisterTemplate.render();
+            this._applyConfigToElement(this.registerConfig, this.$$('#sideRegister'));
+          }
+
+        },
+        /**
+         * Overwrites default margins based on settings
+         *
+         * @method _calcMargins
+         */
+        _calcMargins:function() {
+          var topMargin = 25,
+              rightMargin = 10,
+              bottomMargin = 10,
+              leftMargin = 10;
+
+          if(this.xAxisLocation === 'bottom') {
+            bottomMargin = 40;
+          } else if(this.xAxisLocation === 'top') {
+            topMargin = 40;
+          }
+
+          // TODO if multiple Y...
+          if(this.yAxisLocation === 'left') {
+            leftMargin = 50;
+          } else if(this.yAxisLocation === 'right') {
+            rightMargin = 40;
+          }
+
+          this.set('margin', {
+            'top': topMargin,
+            'right': rightMargin,
+            'bottom': bottomMargin,
+            'left': leftMargin
+          });
+          this.set('marginNav', {
+            'top': 5,
+            'right': rightMargin,
+            'bottom': 20,
+            'left': leftMargin
+          });
+        },
+        _onIronResize: function() {
+          if(this.preventResize) {
+            return;
+          }
+          this.debounce('ironresize', function() {
+            if(this.disableNavigator || this.$$('#navigator')) {
+              var wrapperRect = this.$.wrapper.getBoundingClientRect(),
+                  navigatorRect = this.disableNavigator ? 0 : this.$$('#navigator').getBoundingClientRect(),
+                  widthDeduct = 0,
+                  heightDeduct = 0;
+
+              if(this._topRegister(this.registerLocation)) {
+                var regRect = this.$$('#topRegister').getBoundingClientRect();
+                heightDeduct = regRect.height;
+              }
+
+              if(this._sideRegister(this.registerLocation)) {
+                var regRect = this.$$('#sideRegister').getBoundingClientRect();
+                widthDeduct = regRect.width;
+              }
+
+              heightDeduct += this.disableNavigator ? 0 : navigatorRect.height;
+
+              this.set('width', Math.max(wrapperRect.width - widthDeduct,0));
+              this.set('height', Math.max(wrapperRect.height - heightDeduct,0));
+            }
+          },50);
+        },
+        /**
+         * gets a combined graphical snapshot of the chart and its navigator
+         */
+        getCombinedImage: function(callback,  renderLegend) {
+          this.getImage(function(chartSnap) {
+            if(!this.disableNavigator) {
+              this.$$('#navigator').getImage(function(navigatorSnap) {
+                var canvas = document.createElement('canvas'),
+                    context;
+                canvas.width = Math.max(chartSnap.canvas.width, navigatorSnap.canvas.width);
+                canvas.height = chartSnap.canvas.height + navigatorSnap.canvas.height;
+                context = canvas.getContext('2d');
+
+                context.drawImage(chartSnap.canvas, 0, 0);
+                context.drawImage(navigatorSnap.canvas, 0, chartSnap.canvas.height);
+
+                callback({canvas: canvas, image: canvas.toDataURL("image/png")});
+              }.bind(this));
+            }
+          }.bind(this), renderLegend);
+        },
+        /**
+        * When data changes ensure zoom is reset
+        */
+        _chartDataChanged: function() {
+          this.$.zoom.resetZoom();
+        }
+    });
+</script>

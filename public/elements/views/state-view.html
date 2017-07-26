@@ -1,0 +1,295 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
+<link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown-content.html">
+<link rel="import" href="../../bower_components/px-slider/px-slider.html">
+<link rel="import" href="../../bower_components/px-spinner/px-spinner.html">
+<link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css">
+<script src="https://openlayers.org/en/v4.2.0/build/ol.js" type="text/javascript"></script>
+<script src="../script/coreFile-maps.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.0.0.js"></script>
+
+<style include="px-theme-styles" is="custom-style"></style>
+
+
+<style is="custom-style">
+  :root{
+    --px-dropdown-text-color: white;
+	--px-dropdown-bg-color: cornflowerblue;
+	--px-dropdown-bg-color--hover: gray;
+	--px-dropdown-border-color: gray;
+	--px-slider-background-color: gray;
+	--px-slider-background-color--selected: cornflowerblue;
+	--px-dropdown-text-color : white;
+  }
+</style>
+
+<!-- Load d3.js and c3.js -->
+<script src="../../bower_components/d3/d3.min.js" charset="utf-8"></script>
+<script src="../../library/c3.min.js"></script>
+<dom-module id="state-view">
+    <template>
+        <px-card style="height:800px;padding:0px;background-color: #8b8d8f;">
+            <!--<div class="row" style="margin: 0px">-->
+
+            <!--<div class="row">-->
+            <div class="col-sm-9 col-md-9">
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 " style="margin-top:10px">
+						<div id = "agencyvsopp" class="chart-title font-header">Agency Vs Opportunities</div>
+                        <div id="overchart" class= "overchart">
+                            <div id="chartlefttop_agency" class = "chartlefttopagency"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 agency-state-name" style="width:410px;padding:0px;">
+                        <div class="row core-margin-0">
+                            <div class="col-sm-6 col-md-6 padding-5">
+                                <div class="col-sm-12 col-md-12 core-padding-0 font-header">Facility Name</div>
+                                <br>
+                                <px-dropdown id="facility_State" display-value="All" checkbox-mode="true" search-mode="true">
+                                    <px-dropdown-content id="facilityName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                                        max-cont-character-width='10' items='[[dropDownNames]]'>
+                                    </px-dropdown-content>
+                                </px-dropdown>
+                            </div>
+                            <div class="col-sm-6 col-md-6 padding-5">
+                                <div class="col-sm-12 col-md-12 core-padding-0 font-header">Building Name</div>
+                                <br>
+                                <px-dropdown id="building_State" display-value="All" checkbox-mode="true" search-mode="true">
+                                    <px-dropdown-content id="buildingName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                                        max-cont-character-width='10' items='[[dropDownNames]]'>
+                                    </px-dropdown-content>
+                                </px-dropdown>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12 padding-5 font-header total-score">Ranked List of Facilities-Total Score</div>
+                            <div class="col-sm-12 col-md-12 padding-5 font-header num-opportunity">Number Of Opportunities</div>
+                            <div class="col-sm-12 col-md-12 padding-5 font-header agency-state-header">
+                                <div class="col-sm-3 col-md-3 core-padding-0">Facility Name</div>
+                                <div class="col-sm-4 col-md-4 core-padding-0">Building Name</div>
+                                <div class="col-sm-3 col-md-3 core-padding-0">Agency Name</div>
+                                <div class="col-sm-2 col-md-2 core-padding-0" style="text-align:right">Score</div>
+                            </div>
+                        </div>
+						<div>
+						</div>
+						<px-spinner size="100" id="mid-table-loader"></px-spinner>
+                        <div class="row" id="agency-state-name-content">
+                            <div id="table_building_State">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 padding-5">
+                    <!--<div class="col-sm-9 col-md-9">-->
+                    <div class="map-container">
+                        <div class="map-header">Opportunities Map</div>
+						<div>
+						</div>
+						<px-spinner size="100" id="mid-table-loader"></px-spinner>
+                        <div id="map3" class="map">
+                            <div id="info_State"></div>
+                        </div>
+                        <div id="popup_State" class="ol-popup">
+                            <a id="popup-closer_State" class="ol-popup-closer"></a>
+                            <div id="popup-content"></div>
+                        </div>
+                    </div>
+                    <!--</div>-->
+
+                </div>
+                    <div class="col-sm-6 col-md-6 regulation-state-name" style="padding:0px;">
+                        <div class="row core-margin-0">
+                            <div class="col-sm-4 col-md-4 regulation-header">Regulations</div>
+                            <div class="col-sm-4 col-md-4 padding-5 pull-right">
+                                <div class="col-sm-12 col-md-12 core-padding-0 font-header">State Name</div>
+                                <br>
+                                <px-dropdown id="statepolicy_State" display-value="All" checkbox-mode="true" search-mode="true">
+                                    <px-dropdown-content id="statepolicy_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                                        max-cont-character-width='10' items='[[dropDownNames]]'>
+                                    </px-dropdown-content>
+                                </px-dropdown>
+                            </div>
+                            <div class="col-sm-12 col-md-12 padding-5 font-header agency-state-header">
+                                <div class="col-sm-3 col-md-3 core-padding-0">State Name</div>
+                                <div class="col-sm-3 col-md-3 core-padding-0">Program Link</div>
+                            </div>
+                        </div>
+                        <div class="row" id="agency-state-name-content">
+                            <div id="table_policy">
+
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            <div class="col-sm-3 col-md-3 agency-state-name pull-right core-padding-0">
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Agency</div>
+                    <br>
+                    <px-dropdown id="agency_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="agencyName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">State Name</div>
+                    <br>
+                    <px-dropdown id="state_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="stateName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Utility Partner</div>
+                    <br>
+                    <px-dropdown id="utility_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="utilityName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Data Grade</div>
+                    <br>
+                    <px-dropdown id="dataState_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="dataGrade_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-12 padding-5" style="margin-bottom: 20px">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Possible Contracting Value</div>
+                    <br>
+                    <px-dropdown id="contract_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="contractingValue_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Current Customer</div>
+                    <br>
+                    <px-dropdown id="customer_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="currentCustomer_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Solar Flag</div>
+                    <br>
+                    <px-dropdown id="solar_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="solarFlag_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Battery Flag</div>
+                    <br>
+                    <px-dropdown id="battery_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="batteryFlag_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Cogen Flag</div>
+                    <br>
+                    <px-dropdown id="cogen_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="cogenFlag_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Emgen Flag</div>
+                    <br>
+                    <px-dropdown id="emgen_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="emgenFlag_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-6 col-md-6 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Fuel Cell Flag</div>
+                    <br>
+                    <px-dropdown id="fuelcell_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="fuelcellFlag_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-12 core-padding-0">
+                    <div class="col-sm-12 col-md-12">
+                        <px-slider value="10" end-value="90" max="100" step="1" is-range="true" scale="linear" base="10" exponent="2" min-label-position="bottom"
+                            max-label-position="bottom"></px-slider>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Stage 1& 2 GHG Emissions</div>
+                    <br>
+                    <px-dropdown id="stageemission_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="stageemissionName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-12 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Stage 3 GHG Emissions</div>
+                    <br>
+                    <px-dropdown id="stage3_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="stage3emissionName_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-12 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Reduction in Energy Intensity</div>
+                    <br>
+                    <px-dropdown id="energy_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="energyIntensity_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-12 padding-5">
+                    <div class="col-sm-12 col-md-12 core-padding-0 font-header">Usage of Renewable Energy</div>
+                    <br>
+                    <px-dropdown id="renewable_State" display-value="All" checkbox-mode="true" search-mode="true">
+                        <px-dropdown-content id="renewableEnergy_State" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+                            max-cont-character-width='10' items='[[dropDownNames]]'>
+                        </px-dropdown-content>
+                    </px-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-12 padding-15">
+                    <button type="button" id="applyButton_State" style="margin-right:20px" ; class="btn" on-click="confirmFilters()">Apply</button>
+                    <button type="button" id="cancelButton_State" class="btn" on-click="confirmFilters()">Cancel</button>
+                </div>
+            </div>
+            <!--<div class="row">-->
+
+            <!--</div>-->
+            <!--</div>-->
+
+        </px-card>
+    </template>
+    <script>
+        Polymer({
+            is: 'state-view',
+            properties: {},
+            attached: function () {
+				statefunction()
+                console.log('stateview-view ready()')
+
+            }
+        });
+    </script>
+</dom-module>

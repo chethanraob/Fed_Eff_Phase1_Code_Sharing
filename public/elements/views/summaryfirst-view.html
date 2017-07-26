@@ -1,0 +1,243 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/px-context-browser/px-context-browser.html">
+<link rel="import" href="../../bower_components/px-deck-selector/px-deck-selector.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/px-card/px-card.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown-content.html">
+<link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
+<link rel="import" href="../../bower_components/px-slider/px-slider.html">
+<link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../css/summary-view.css">
+<link rel="stylesheet" href="../../bootstrap/js/bootstrap.min.js">
+<link rel="import" href="../../bower_components/px-data-table/px-data-table.html">
+<link rel="import" href="../../bower_components/px-map/px-map.html" />
+<link rel="import" href="../../bower_components/px-map/px-map-tile-layer.html" />
+<script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+<script src="../script/coreFile-maps.js"></script>
+
+<link rel="stylesheet" href="../../css/common.style.css">
+<link rel="stylesheet" href="../../css/main-page.style.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+
+<!-- local px-deck -->
+<link rel="import" href="../../elements/px-deck/px-deck-index.html">
+<dom-module id="summaryfirst-view">
+	<template>
+		<px-card style="height:800px">
+<div class="container-fluid">
+		<div class="row">
+				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+<span class = "col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+<div  class="number-circle" id="circle1" style="margin-top:30px;background: #c63939"> Total Records ~36,000</div>
+</span>
+				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+<div class="number-circle" id="circle2" style="margin-top:128px; background: #808080; padding-top: 40px; padding-left: 12px;">Constellation Customers ~6,400</div>
+</span>
+				</span>
+				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0; margin-top:38px">
+	<div class="row" style="font-weight:700;margin-top:20px;color:black">
+	<div class="col-sm-2 col-md-2"><b>Agency</b></div>
+	<div class="col-sm-2 col-md-2">No. of Records</div>
+		<div class="col-sm-2 col-md-2">Agency</div>
+	<div class="col-sm-2 col-md-2">No. of Records</div>
+		<div class="col-sm-2 col-md-2">Agency</div>
+	<div class="col-sm-2 col-md-2">No. of Records</div>
+	</div>
+<div style="border:2px solid; border-color: darkgray; height: 200px; width: 100%;color:black">
+<div class="row" style="margin-left:-10px;font-weight:500">
+	<div class="col-sm-2 col-md-2" >DHS</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">266</div>
+		<div class="col-sm-2 col-md-2">FDIC</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">7</div>
+		<div class="col-sm-2 col-md-2">SI</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">10</div>
+	<div class="col-sm-2 col-md-2">DOC</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">21</div>
+		<div class="col-sm-2 col-md-2">GSA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">9,552</div>
+		<div class="col-sm-2 col-md-2">SSA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">8</div>
+	<div class="col-sm-2 col-md-2">DOD</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">1,529</div>
+		<div class="col-sm-2 col-md-2">HHS</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">78</div>
+		<div class="col-sm-2 col-md-2">TRSY</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">17</div>
+	<div class="col-sm-2 col-md-2">DOE</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">31</div>
+		<div class="col-sm-2 col-md-2">HUD</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">1</div>
+		<div class="col-sm-2 col-md-2">TVA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">49</div>
+	<div class="col-sm-2 col-md-2">DOI</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">496</div>
+		<div class="col-sm-2 col-md-2">NARA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">8</div>
+		<div class="col-sm-2 col-md-2">USACE</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">38</div>
+	<div class="col-sm-2 col-md-2">DOJ</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">87</div>
+		<div class="col-sm-2 col-md-2">NASA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">558</div>
+		<div class="col-sm-2 col-md-2">USDA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">154</div>
+	<div class="col-sm-2 col-md-2">DOL</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">52</div>
+		<div class="col-sm-2 col-md-2">NRC</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">2</div>
+		<div class="col-sm-2 col-md-2">USPS</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">15,035</div>
+	<div class="col-sm-2 col-md-2">DOT</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">643</div>
+		<div class="col-sm-2 col-md-2">OPM</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">3</div>
+		<div class="col-sm-2 col-md-2">VA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">1,811</div>
+	<div class="col-sm-2 col-md-2">EPA</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">16</div>
+		<div class="col-sm-2 col-md-2">RRB</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">1</div>
+		<div class="col-sm-2 col-md-2" >Unknown</div>
+	<div class="col-sm-2 col-md-2" style="color:Darkslategray">8,043</div>
+</div>
+</span>
+			</div>
+			</div>
+			<div class="row" style="margin-top:15px">
+				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+<div style="border:2px solid; height: 270px; border-color: darkgray; margin-right:10px;">
+	 <px-data-table id="table1"
+	 table-data='[[tabledat]]' 
+	 language="en" 
+	 hide-pagination-control="true"
+	 striped="true"
+	 include-all-columns="true"></px-data-table>
+	 </div>
+</span>
+				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;  ">
+	<div style="border:2px solid; height: 270px; border-color: darkgray; ">
+		<div class="row" id="scorecard-title" style="text-align: center; ">
+		<b>Legend For Agency Scorecard</b>
+		</div>
+	<div class="row">
+		<span class = "col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div id="scorecard_1" class="number-circle"  > </div>
+		</span>
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;font-weight:10">
+		<div style="padding: 20px; color:Darkslategray"> 
+		<b>Agency is off track from the set target</b>
+		</div>
+		</span>
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div id="scorecard_2" class="number-circle" > </div>
+		</span>
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div  style="padding: 20px; color:Darkslategray"> 
+		<b>Agency is on track from the set target</b>
+		</div>
+		</span>
+			</div>
+			<div class="row">
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div id="scorecard_1" class="number-circle" style="background: yellow" > </div>
+		</span>
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div style="padding: 20px; color:Darkslategray"> 
+		<b>Agency is slightly off track in achieving their tagets</b>
+		</div>
+		</span>
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div id="scorecard_2" class="number-circle" style="background: #808080" > </div>
+		</span>
+				<span class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+		<div  style="padding: 20px; color:Darkslategray"> 
+		<b>Data unavailable</b>
+		</div>
+		</span>
+			</div>
+			</div>
+			</span>
+			</div>
+			</div>
+		</px-card>
+	
+	</template>
+	<script>
+		Polymer({
+			is: 'summaryfirst-view',
+			properties: {
+				dataserve: {
+					type: Array,
+					value: function () {
+						return [{
+							"percentage": "90",
+							"x": "15",
+							"y": "g1"
+						}, {
+							"percentage": "10",
+							"x": "1",
+							"y": "g2"
+						}
+
+						]
+					}
+				},
+				tabledata: {
+					type: Array,
+					value: function () {
+						return "hello"
+					}				
+},
+				progress: {
+					type: Array,
+					value: function () {
+						return 50
+					}
+				},
+				dropDownnames: {
+					type: Array,
+					value: function () {
+						return ["Goddard Flight Centre", "NTC Fort Irwin"]					
+}
+				},
+				dropDown2: {
+					type: Array,
+					value: function () {
+						return ["A", "B", "C"]					
+}
+				},
+				dropDown3: {
+					type: Array,
+					value: function () {
+						return ["ZZZZ", "XXXX", "YYYY"]					
+}
+				},
+				dropDown4: {
+					type: Array,
+					value: function () {
+						return ["A", "B", "C"]					
+}
+				},
+				dropDown5: {
+					type: Array,
+					value: function () {
+						return ["A", "B"]
+					}
+				},
+				typedata: {
+					type: Array,
+					value: function () {
+						return ["hai", "hello"]
+					}
+				}
+			},
+			attached: function () {
+				//document.getElementsByTagName('main')[0].style.backgroundColor="gray"
+				firstfunction()
+				console.log('firstpage-view ready()')
+
+			}
+		});
+	</script>
+</dom-module>

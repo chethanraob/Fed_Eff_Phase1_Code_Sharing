@@ -1,0 +1,81 @@
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../px-card/px-card.html" />
+
+<link rel="import" href="css/px-sample-cards-styles.html">
+
+<dom-module id="temperature-card">
+  <style>
+    .temp--box {
+      border: 1px solid var(--px-sample-cards-temp--box, #b6c3cc);
+      padding: 0 20px 20px 20px;
+      margin: 10px;
+    }
+    .more-info {
+      padding: 0 10px;
+    }
+    .more-info h2 a {
+      font-size: 14px;
+      margin-left: 10px;
+    }
+    .temp-box-container {
+      width: 80%;
+      margin: 0 auto;
+    }
+  </style>
+  <template>
+    <style include="px-sample-cards-styles"></style>
+    
+    <px-card icon="fa-database" header-text="Data Binding">
+      <p>
+        This Fahrenheit to Celsius converter shows how you can link data between widgets within cards. This concept illustrates how making connections between components within cards can be used in industrial applications, such as multiple time series charts.
+See comments within the code for data binding instructions.
+      </p>
+      <div class="flex temp-box-container">
+        <div class="flex__item temp--box">
+          <h1 class="gamma">{{fahrenheit}}<span><sup>o</sup>F</span></h1>
+          <div class="input-group">
+            <input class="text-input" type="text" value="{{fahrenheit::input}}"></input>
+            <button class="btn input-group__addon" type="button" on-click="fahrenheitChanged">Go</button>
+          </div>
+        </div>
+        <div class="flex__item temp--box">
+          <h1 class="gamma">{{celsius}}<span><sup>o</sup>C</span></h1>
+          <div class="input-group">
+            <input class="text-input" type="text" value="{{celsius::input}}"></input>
+            <button class="btn input-group__addon" type="button" on-click="celsiusChanged">Go</button>
+          </div>
+        </div>
+      </div>
+      <div class="temp-box-container">
+        <div class="more-info">
+          <p>
+            More on Data Binding <a href="https://github.com/PredixDev/px-card" class="actionable"> View Documentation</a>
+          </p>
+        </div>
+      </div>
+    </px-card>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'temperature-card',
+    ready: function() {
+      this.fahrenheit = 50;
+      this.celsius = this.convertFtoC(this.fahrenheit);
+    },
+    convertCtoF: function(c) {
+      return (c * 1.8 + 32).toFixed(1);
+    },
+    convertFtoC: function(f) {
+      return ((f - 32) / 1.8).toFixed(1);
+    },
+    celsiusChanged: function(e) {
+      this.fahrenheit = this.convertCtoF(this.celsius);
+    },
+    fahrenheitChanged: function(e) {
+      this.celsius = this.convertFtoC(this.fahrenheit);
+    },
+    behaviors: [px.card]
+  });
+</script>

@@ -1,0 +1,111 @@
+<!-- Common imports -->
+<link rel="import" href="../../polymer/polymer.html" />
+
+<!-- Common demo imports -->
+<link rel="import" href="../../px-sass-doc/px-sass-doc.html" />
+<link rel="import" href="../css/px-input-group-design-demo-styles.html" />
+
+<!-- Demo DOM module -->
+<dom-module id="local-element-demo">
+  <template>
+    <!-- 0: Import the styles-->
+    <style include="px-input-group-design-demo-styles" is="custom-style"></style>
+
+<!-- 1: Describe Module -->
+<px-sass-doc
+  module-name="px-input-group-design"
+  description="Predix UI Input Group module is a simple implementation of input groups. Add elements to an input field for context and/or inline actions."
+  layer="objects"
+  sassdoc-path="sassdoc.json"
+  dependencies='[
+    "https://github.com/PredixDev/px-forms-design",
+    "https://github.com/PredixDev/px-buttons-design"
+  ]'
+  selected-options="{{selectedOptions}}"
+  tabs='["Basic","Split","Buttons"]' selected-tab="{{selectedTab}}">
+
+<!-- FOR 'Basic' TAB -->
+<template is="dom-if" if="[[_tabIs('Basic',selectedTab)]]" restamp="true">
+<section data-slot="demoHTML">
+<span class="form-field input-group">
+  <input class="text-input input--regular" type="text">
+  <span class="input-group__addon">.00</span>
+</span>
+</section>
+</template>
+
+<!-- FOR 'SPLIT' TAB -->
+<template is="dom-if" if="[[_tabIs('Split',selectedTab)]]" restamp="true">
+<section data-slot="demoHTML">
+<div class="form-field input-group style-scope local-element-demo">
+  <span class="input-group__addon style-scope local-element-demo">$</span>
+  <input class="text-input style-scope local-element-demo" type="text">
+  <span class="input-group__addon style-scope local-element-demo">.00</span>
+</div>
+</section>
+</template>
+
+<!-- FOR 'OTHER' TAB -->
+<template is="dom-if" if="[[_tabIs('Buttons',selectedTab)]]" restamp="true">
+<section data-slot="demoHTML">
+<div class="form-field input-group">
+  <input class="text-input">
+  <button class="btn input-group__addon" type="button">Options</button>
+  <button class="btn btn--primary input-group__addon" type="button">Search</button>
+</div>
+</section>
+</template>
+
+<!-- 4: Import -->
+
+<section data-slot="import">
+@import 'px-input-group-design/_objects.input-group.scss';
+</section>
+
+
+<!-- 5: Set Usage HTML -->
+<section data-slot="usage">
+Use the following HTML to set up your project:
+```
+<!-- Basic input group -->
+<span class="form-field input-group">
+  <input class="text-input" type="text">
+  <span class="input-group__addon">.00</span>
+</span>
+
+
+<!-- Input group with styled buttons -->
+<div class="form-field input-group">
+  <input class="text-input" type=…>
+  <button class="btn input-group__addon" type="button">Options</button>
+  <button class="btn btn--primary input-group__addon" type="button">Search</button>
+</div>
+
+
+<!-- Input group with split content -->
+<div class="form-field input-group">
+  <span class="input-group__addon">$</span>
+  <input class="text-input" type="text">
+  <span class="input-group__addon">.00</span>
+</div>
+
+```
+</section>
+
+</px-sass-doc>
+</template>
+
+</dom-module>
+
+<!-- 6: Handle selectedOptions, update demo -->
+<script>
+  Polymer({
+    is: 'local-element-demo',
+
+    _tabIs : function(tabName) {
+    var selected = this.selectedTab || "";
+    return selected === tabName;
+    }
+
+  });
+</script>

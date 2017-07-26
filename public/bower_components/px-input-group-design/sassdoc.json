@@ -1,0 +1,80 @@
+[
+    {
+        "description": "Sets a prepended namespace for all generated classes.\n\n",
+        "commentRange": {
+            "start": 10,
+            "end": 13
+        },
+        "context": {
+            "type": "variable",
+            "name": "inuit-input-group-namespace",
+            "value": "$inuit-namespace",
+            "scope": "default",
+            "line": {
+                "start": 14,
+                "end": 14
+            }
+        },
+        "group": [
+            "px-input-group-design:variables:style"
+        ],
+        "type": "String [default]",
+        "access": "public",
+        "file": {
+            "path": "_objects.input-group.scss",
+            "name": "_objects.input-group.scss"
+        }
+    },
+    {
+        "description": "Sets the font color.\n\n",
+        "commentRange": {
+            "start": 16,
+            "end": 19
+        },
+        "context": {
+            "type": "variable",
+            "name": "inuit-input-group-color",
+            "value": "$gray5",
+            "scope": "default",
+            "line": {
+                "start": 20,
+                "end": 20
+            }
+        },
+        "group": [
+            "px-input-group-design:variables:style"
+        ],
+        "type": "Color [default]",
+        "access": "public",
+        "file": {
+            "path": "_objects.input-group.scss",
+            "name": "_objects.input-group.scss"
+        }
+    },
+    {
+        "description": "Sets the icon color.\n\n",
+        "commentRange": {
+            "start": 22,
+            "end": 25
+        },
+        "context": {
+            "type": "variable",
+            "name": "inuit-input-group-color--icon",
+            "value": "$gray7",
+            "scope": "default",
+            "line": {
+                "start": 26,
+                "end": 26
+            }
+        },
+        "group": [
+            "px-input-group-design:variables:style"
+        ],
+        "type": "Color [default]",
+        "access": "public",
+        "file": {
+            "path": "_objects.input-group.scss",
+            "name": "_objects.input-group.scss"
+        }
+    }
+]

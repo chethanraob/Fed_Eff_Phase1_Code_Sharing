@@ -1,0 +1,16 @@
+.buildinf-greenred{text-align:center;
+	}
+
+.small-circle
+   {
+	border-radius: 20%;
+    /*behavior: url(PIE.htc);  remove if you don't care about IE8 */
+    width: 30%;
+    height: 30%;
+	/*padding: 30px;*/
+    background: green;
+    /*border: 2px solid #666;*/
+    color: black;
+    text-align: bottom;
+    font: 15px;   
+   }
