@@ -798,13 +798,14 @@ function secondfunction() {
         if (selectedEnergy == "") {
             selectedEnergy = globalEnergy
         }
-
+		var selectedStartftvalue = document.getElementById("grossSqft").value;
+	    var selectedEndftvalue = document.getElementById("grossSqft").endValue;
 
 
 
         var requestData = {
             "agency": selectedAgency, "state": selectedState, "utility": selectedUtility,
-            "customer": selectedCustomer, "contract": selectedContract, "battery": selectedBattery, "emgen": selectedEmgen,
+            "customer": selectedCustomer, "startftvalue": selectedStartftvalue, "endftvalue": selectedEndftvalue, "contract": selectedContract, "battery": selectedBattery, "emgen": selectedEmgen,
             "cogen": selectedCogen, "fuelcell": selectedFuel, "renewable": selectedRenewable, "solar": selectedSolar,
             "stage": selectedStage, "stage3": selectedStage3, "data": selectedData, "energy": selectedEnergy
         };
@@ -912,7 +913,7 @@ function secondfunction() {
 
         var rasterLayer = new ol.layer.Tile({
             source: new ol.source.TileJSON({
-                url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            url: 'https://api.mapbox.com/v4/mapbox.streets-basic.json?access_token=pk.eyJ1Ijoic2VhcmNoaW5nYWtrdSIsImEiOiJjajVrdnVrZ3QybncxMnFvNnZwOXdnNzR3In0.TwSykj2VNdmMWko458WTmQ',
                 crossOrigin: ''
             })
         });
@@ -1158,7 +1159,7 @@ src: 'https://openlayers.org/en/v4.2.0/examples/data/dot.png'
 
     var rasterLayer = new ol.layer.Tile({
         source: new ol.source.TileJSON({
-            url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            url: 'https://api.mapbox.com/v4/mapbox.streets-basic.json?access_token=pk.eyJ1Ijoic2VhcmNoaW5nYWtrdSIsImEiOiJjajVrdnVrZ3QybncxMnFvNnZwOXdnNzR3In0.TwSykj2VNdmMWko458WTmQ',
             crossOrigin: ''
         })
     });
@@ -1605,7 +1606,7 @@ function statefunction() {
 
         var rasterLayer = new ol.layer.Tile({
             source: new ol.source.TileJSON({
-                url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            url: 'https://api.mapbox.com/v4/mapbox.streets-basic.json?access_token=pk.eyJ1Ijoic2VhcmNoaW5nYWtrdSIsImEiOiJjajVrdnVrZ3QybncxMnFvNnZwOXdnNzR3In0.TwSykj2VNdmMWko458WTmQ',
                 crossOrigin: ''
             })
         });
@@ -2077,7 +2078,7 @@ src: 'https://openlayers.org/en/v4.2.0/examples/data/dot.png'
 
     var rasterLayer = new ol.layer.Tile({
         source: new ol.source.TileJSON({
-            url: 'https://api.tiles.mapbox.com/v3/mapbox.geography-class.json?secure',
+            url: 'https://api.mapbox.com/v4/mapbox.streets-basic.json?access_token=pk.eyJ1Ijoic2VhcmNoaW5nYWtrdSIsImEiOiJjajVrdnVrZ3QybncxMnFvNnZwOXdnNzR3In0.TwSykj2VNdmMWko458WTmQ',
             crossOrigin: ''
         })
     });
