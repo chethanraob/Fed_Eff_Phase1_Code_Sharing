@@ -1,3 +1,17 @@
+<!-- 
+\# Title : Building Info Tab 2
+\# Created : July 17, 2017 5:30 PM 
+\# Author : Shivnesh 
+\# This code creates a building info tab 2 detailing the kind of data being used for the Application. 
+\# Revisions : 2
+\# Version : 0.3 
+\# Date : July 24, 2017 8:44 PM 
+\# Author : Shivnesh
+\# Changes : 
+\# * Building view populates on clicking more info in building info tab 1
+\# * Circle coloring fixes
+-->
+<!-- Listing down the dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
 <link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
@@ -5,180 +19,198 @@
 <link rel="import" href="../../bower_components/px-dropdown/px-dropdown-content.html">
 <link rel="import" href="../../bower_components/px-simple-line-chart/px-simple-line-chart.html">
 <link rel="import" href="../../bower_components/px-slider/px-slider.html">
+<link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
 <link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css">
 <script src="https://openlayers.org/en/v4.2.0/build/ol.js" type="text/javascript"></script>
 <script src="../script/coreFile-maps.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.0.0.js"></script>
 
- <!-- Load d3.js and c3.js -->
+<!-- Load d3.js and c3.js -->
 <script src="../../bower_components/d3/d3.min.js" charset="utf-8"></script>
 <script src="../../library/c3.min.js"></script>
 
 <dom-module id="buildingmoreinfo-view">
-  <template>
-	 <div class="row toprowpanel">
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
-		<h4><b>Agency</b></h4>
-		</div>
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
-		<h4><b>Facility Name</b></h4>
-		</div>
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
-		<h4><b>Building Name</b></h4>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3">
-		<h4><b>State</b></h4>
-		</div>
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10" >
-			<div id = "agency-name"><h5>agency name</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 ">
-			<div id = "facility-name"><h5>facility name</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3">
-			<div id = "building-name"><h5>building name</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3">
-			<div id = "state-name"><h5>state name</h5></div>
-		</div>
-	</div>
-	<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7" style = "padding-left:0px">
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Parameter</b></div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Max. Value</b></div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Median Value</b></div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Selected Facility Value</b></div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Total Score (/800)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">E.Intensity Score (/100)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">E.Usage Score (/100)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Sq.Ft. Score (/100)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">No. of buildings</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Buildings Metered for Electricity</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Sq.Ft ('000)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Annual Energy Usage (MBtu)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Energy Intesity (KBtu/Sq.Ft.)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Base Load (kW)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Peak Load (kW)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Annual Energy Spending ($)</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Time Stamp of Data Publish</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-			<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-		</div>
-		
-	</div>
-	<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5">
-		<div id = "svpgraph" >
-			<px-simple-line-chart line-data="[ [10,2], [20,3], [3,100] ]"></px-simple-line-chart>
-		</div>
-		<div id = "svpdropdown" > 
-			<px-dropdown display-value="Total Mu Sigma Score">	
-				<px-dropdown-content extend-dropdown="true" extend-dropdown-by="25" max-cont-character-width="10" items='[{"key":0, "val": "Total Mu Sigma Score"}, {"key":1, "val": "Sq. Ft. Score"}, {"key":2, "val": "Energy Profile Score"}, {"key":3, "val": "Energy Consumption Score"}, {"key":4, "val": "Energy Intensity Score"}]'>
-				</px-dropdown-content>
-			</px-dropdown>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Address</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">add</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Utility</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">util</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">UESC/ESPC</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">uesc</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Person of Contact</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">poc</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Contact Details</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">cd</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Interval Data</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">idata</div>
-		</div>
-		<div class = "row rowpanel">
-			<div class = "col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Exelon Customer? (Y/N)</div>
-			<div class = "col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">y</div>
-		</div>
-	</div>
-  </template>
-  <script>
-    Polymer({
-      is: 'buildingmoreinfo-view',
-      properties: {},
-      attached: function() {
-		//buildingInf()
-		//buildingInfCircles()
-		//buildingInf()
-		console.log('buildingmoreinf-view ready()')
-      }
-    });
-  </script>
+	<template>
+		<!-- Header section -->
+		<px-card style="padding:0px;height:900px;background-color: #8b8d8f;">
+			<div>
+				<!-- Top panel with all the names -->
+				<div class="row toprowpanel">
+					<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
+						<h4><b>Agency</b></h4>
+					</div>
+					<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
+						<h4><b>Facility Name</b></h4>
+					</div>
+					<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
+						<h4><b>Building Name</b></h4>
+					</div>
+					<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3">
+						<h4><b>State</b></h4>
+					</div>
+					<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
+						<div id="agency-name-mi">
+							<h5>agency name</h5>
+						</div>
+					</div>
+					<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 ">
+						<div id="facility-name-mi">
+							<h5>facility name</h5>
+						</div>
+					</div>
+					<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3">
+						<div id="building-name-mi">
+							<h5>building name</h5>
+						</div>
+					</div>
+					<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3">
+						<div id="state-name-mi">
+							<h5>state name</h5>
+						</div>
+					</div>
+				</div>
+				<!-- Table on left containing max median and facility values-->
+				<div class="col-sm-7 col-md-7  col-xs-7 col-lg-7" style="padding-left:0px">
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Parameter</b></div>
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Max. Value</b></div>
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Median Value</b></div>
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 tabletitle"><b>Selected Facility Value</b></div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Total Score (/800)</div>
+						<div id="max-ts" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-ts" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-ts" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">E.Intensity Score (/100)</div>
+						<div id="max-is" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-is" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-is" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">E.Usage Score (/100)</div>
+						<div id="max-us" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-us" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-us" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Sq.Ft. Score (/100)</div>
+						<div id="max-sfs" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-sfs" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-sfs" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">No. of buildings</div>
+						<div id="max-nb" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-nb" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-nb" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Buildings Metered for Electricity</div>
+						<div id="max-bme" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-bme" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-bme" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Sq.Ft ('000)</div>
+						<div id="max-sf" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-sf" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-sf" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Annual Energy Usage (MBtu)</div>
+						<div id="max-aeu" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-aeu" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-aeu" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Energy Intesity (KBtu/Sq.Ft.)</div>
+						<div id="max-ei" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-ei" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-ei" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Base Load (kW)</div>
+						<div id="max-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Peak Load (kW)</div>
+						<div id="max-pl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-pl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-pl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Annual Energy Spending ($)</div>
+						<div id="max-aes" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-aes" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-aes" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Time Stamp of Data Publish</div>
+						<div id="max-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="fv-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+					</div>
+
+				</div>
+				<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5">
+					<!--Score vs Percentile Graph-->
+					<div id="svpgraph">
+
+					</div>
+					<div id="svpdropdown">
+						<px-dropdown display-value="Total Mu Sigma Score">
+							<px-dropdown-content extend-dropdown="true" extend-dropdown-by="25" max-cont-character-width="10" items='[{"key":0, "val": "Total Mu Sigma Score"}, {"key":1, "val": "Sq. Ft. Score"}, {"key":2, "val": "Energy Profile Score"}, {"key":3, "val": "Energy Consumption Score"}, {"key":4, "val": "Energy Intensity Score"}]'>
+							</px-dropdown-content>
+						</px-dropdown>
+					</div>
+					<!--Right table with building level details-->
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Address</div>
+						<div id="address" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">add</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Utility</div>
+						<div id="utility" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">util</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">UESC/ESPC</div>
+						<div id="uesc-espc" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">uesc</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Person of Contact</div>
+						<div id="poc" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">poc</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Contact Details</div>
+						<div id="contact" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">cd</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Interval Data</div>
+						<div id="intdata" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">idata</div>
+					</div>
+					<div class="row rowpanel">
+						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Exelon Customer? (Y/N)</div>
+						<div id="exeloncust" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">y</div>
+					</div>
+				</div>
+			</div>
+		</px-card>
+	</template>
+	<script>
+		Polymer({
+			is: 'buildingmoreinfo-view',
+			properties: {},
+			attached: function () {
+				//buildingInf()
+				//buildingInfCircles()
+				//buildingInf()
+				console.log('buildingmoreinf-view ready()')
+			}
+		});
+	</script>
 </dom-module>

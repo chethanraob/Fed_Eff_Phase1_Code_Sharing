@@ -1,0 +1,34 @@
+{
+  "verbose": false,
+  "plugins": {
+    "local": {
+      "browsers": [
+        "chrome",
+        "firefox"
+      ]
+    },
+    "sauce": {
+      "disabled": true,
+      "browsers": [
+        {
+          "browserName": "microsoftedge",
+          "platform": "Windows 10",
+          "version": ""
+        },
+        {
+          "browserName": "safari",
+          "platform": "OS X 10.11",
+          "version": "10"
+        }
+      ]
+    }
+  },
+  "suites": [
+    "test/px-map-root-fixture.html",
+    "test/px-map-popup-fixture.html",
+    "test/px-map-control-fixture.html",
+    "test/px-map-marker-fixture.html",
+    "test/px-map-tile-layer-fixture.html",
+    "test/px-map-layer-geojson-fixture.html"
+  ]
+}

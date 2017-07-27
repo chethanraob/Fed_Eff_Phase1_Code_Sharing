@@ -1,4 +1,4 @@
 .toprowpanel{margin: 0%;background-color:white;}
 .rowpanel{margin: 1%;background-color:#8b8d8f;}
-.tabletitle{background-color: black;color:white;border-style:solid;border-color:#8b8d8f;margin:0%;height:50px;}
+.tabletitle{background-color: black;text-align:center;color:white;border-style:solid;border-color:#8b8d8f;margin:0%;height:50px;}
 .colpanel{margin: 0%;background-color:white;border-style:solid;border-color:#8b8d8f;height:50px;}

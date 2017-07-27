@@ -1,3 +1,18 @@
+<!-- 
+\# Title : Summary View Tab 
+\# Created : June 26, 2017 7:30 PM 
+\# Author : Aklank Jain 
+\# This code creates a summary view tab detailing the kind of data being used for the Application. 
+\# Revisions : 2 
+\# Version : 0.7 
+\# Date : July 27, 2017 3:44 PM 
+\# Author : Aklank Jain 
+\# Changes : 
+\# * Fixed formatting of the sub-sections 
+\# * Changed the font used throughout the application
+-->
+
+<!-- Listing down the dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/px-context-browser/px-context-browser.html">
 <link rel="import" href="../../bower_components/px-deck-selector/px-deck-selector.html">
@@ -15,7 +30,6 @@
 <link rel="import" href="../../bower_components/px-map/px-map-tile-layer.html" />
 <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 <script src="../script/coreFile-maps.js"></script>
-
 <link rel="stylesheet" href="../../css/common.style.css">
 <link rel="stylesheet" href="../../css/main-page.style.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
@@ -25,17 +39,18 @@
 <dom-module id="summaryfirst-view">
 	<template>
 		<px-card style="height:800px">
-<div class="container-fluid">
-		<div class="row">
-				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+			<div class="container-fluid">
+				<div class="row">
+					<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
 <span class = "col-lg-6 col-md-6 col-sm-6" style="padding:0;">
 <div  class="number-circle" id="circle1" style="margin-top:30px;background: #c63939"> Total Records ~36,000</div>
 </span>
-				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+					<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
 <div class="number-circle" id="circle2" style="margin-top:128px; background: #808080; padding-top: 40px; padding-left: 12px;">Constellation Customers ~6,400</div>
 </span>
-				</span>
-				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0; margin-top:38px">
+					</span>
+					<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0; margin-top:38px">
+<!-- Circle on the Top Left Section -->	
 	<div class="row" style="font-weight:700;margin-top:20px;color:black">
 	<div class="col-sm-2 col-md-2"><b>Agency</b></div>
 	<div class="col-sm-2 col-md-2">No. of Records</div>
@@ -44,6 +59,7 @@
 		<div class="col-sm-2 col-md-2">Agency</div>
 	<div class="col-sm-2 col-md-2">No. of Records</div>
 	</div>
+<!-- Number of rows by Agency Table Section -->
 <div style="border:2px solid; border-color: darkgray; height: 200px; width: 100%;color:black">
 <div class="row" style="margin-left:-10px;font-weight:500">
 	<div class="col-sm-2 col-md-2" >DHS</div>
@@ -102,10 +118,11 @@
 	<div class="col-sm-2 col-md-2" style="color:Darkslategray">8,043</div>
 </div>
 </span>
-			</div>
+				</div>
 			</div>
 			<div class="row" style="margin-top:15px">
 				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;">
+<!-- Number of rows by Grade Section -->
 <div style="border:2px solid; height: 270px; border-color: darkgray; margin-right:10px;">
 	 <px-data-table id="table1"
 	 table-data='[[tabledat]]' 
@@ -116,6 +133,7 @@
 	 </div>
 </span>
 				<span class="col-lg-6 col-md-6 col-sm-6" style="padding:0;  ">
+<!-- Legend For Agency Scorecard Section -->	
 	<div style="border:2px solid; height: 270px; border-color: darkgray; ">
 		<div class="row" id="scorecard-title" style="text-align: center; ">
 		<b>Legend For Agency Scorecard</b>
@@ -161,8 +179,9 @@
 			</div>
 			</div>
 		</px-card>
-	
+
 	</template>
+<!-- Attaching the Dom to the Navigation bar using polymer functions -->
 	<script>
 		Polymer({
 			is: 'summaryfirst-view',
@@ -179,7 +198,6 @@
 							"x": "1",
 							"y": "g2"
 						}
-
 						]
 					}
 				},
@@ -187,8 +205,8 @@
 					type: Array,
 					value: function () {
 						return "hello"
-					}				
-},
+					}
+				},
 				progress: {
 					type: Array,
 					value: function () {
@@ -198,26 +216,26 @@
 				dropDownnames: {
 					type: Array,
 					value: function () {
-						return ["Goddard Flight Centre", "NTC Fort Irwin"]					
-}
+						return ["Goddard Flight Centre", "NTC Fort Irwin"]
+					}
 				},
 				dropDown2: {
 					type: Array,
 					value: function () {
-						return ["A", "B", "C"]					
-}
+						return ["A", "B", "C"]
+					}
 				},
 				dropDown3: {
 					type: Array,
 					value: function () {
-						return ["ZZZZ", "XXXX", "YYYY"]					
-}
+						return ["ZZZZ", "XXXX", "YYYY"]
+					}
 				},
 				dropDown4: {
 					type: Array,
 					value: function () {
-						return ["A", "B", "C"]					
-}
+						return ["A", "B", "C"]
+					}
 				},
 				dropDown5: {
 					type: Array,

@@ -1,3 +1,13 @@
+<!-- 
+\# Title : Agency Tab 
+\# Created : July 22, 2017 5:30 PM 
+\# Author :Ankita Gurdasani
+\# This code creates a Agency tab featuring filtering options and different visualizations. 
+\# Changes : 
+\# * Added slider function
+-->
+<!-- Listing down the dependencies -->
+
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
 <link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
@@ -9,7 +19,7 @@
 
 <style include="px-theme-styles" is="custom-style"></style>
 
-
+<!--Styling options for dropdown-->
 <style is="custom-style">
 	:root {
 		--px-dropdown-text-color: white;
@@ -38,6 +48,7 @@
 							<div id="chartlefttop_agencyoverview" class="chartlefttopagency"></div>
 						</div>
 					</div>
+					<!--div to populate agency vs average score --> 
 					<div class="col-sm-6 col-md-6 agency-state-name" style="width:410px;padding:0px;">
 						<div class="row core-margin-0">
 							<div class="col-sm-12 col-md-12 core-padding-0 padding-10 font-header">Agency average score(Total Score)</div>
@@ -48,7 +59,9 @@
 							</div>
 						</div>
 						<div></div>
+						<!--adding the loader-->
 						<px-spinner size="100" id="mid-table-loader"></px-spinner>
+					
 						<div class="row" id="agency-state-name-content">
 
 							<div>
@@ -62,6 +75,7 @@
 				</div>
 				<div class="row" style="margin-top:20px">
 					<div class="col-sm-3 col-md-3"></div>
+						<!--div to populate the agency vs scorecard table-->
 					<div class="col-sm-6 col-md-6 core-padding-0" style="background:white;">
 						<div class="row avg-scorecard-hdr padding-5 core-margin-0">Agency Scorecard</div>
 						<div class="row core-margin-0">
@@ -77,8 +91,8 @@
 							</div>
 						</div>
 						<div class="scorecard-content">
-							<div id="agency_scorecard">
-								HIII
+							<div id="agency_scorecard" style="height:200px;overflow-y:auto">
+
 							</div>
 						</div>
 					</div>
@@ -86,6 +100,7 @@
 
 				</div>
 			</div>
+			<!--div to add all the dropdowns-->
 			<div class="col-sm-3 col-md-3 agency-state-name pull-right core-padding-0">
 				<div class="col-sm-6 col-md-6 padding-5">
 					<div class="col-sm-12 col-md-12 core-padding-0 font-header">Agency</div>

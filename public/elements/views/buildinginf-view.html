@@ -1,3 +1,17 @@
+<!-- 
+\# Title : Building Info Tab A 
+\# Created : July 17, 2017 5:30 PM 
+\# Author : Shivnesh 
+\# This code creates a summary view tab detailing the kind of data being used for the Application. 
+\# Revisions : 2
+\# Version : 0.3 
+\# Date : July 24, 2017 8:44 PM 
+\# Author : Shivensh
+\# Changes : 
+\# * Building view populates on selection in overview tab
+\# * Circle coloring fixes
+-->
+<!-- Listing down the dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
 <link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
@@ -9,80 +23,109 @@
 <script src="../script/coreFile-maps.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.0.0.js"></script>
 
- <!-- Load d3.js and c3.js -->
+<!-- Load d3.js and c3.js -->
 <script src="../../bower_components/d3/d3.min.js" charset="utf-8"></script>
 <script src="../../library/c3.min.js"></script>
 
 <dom-module id="buildinginf-view">
-  <template>
-   <div class="row" style="margin: 0%;background-color:white;">
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
-		<h4><b>Agency</b></h4>
-		</div>
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
-		<h4><b>Facility Name</b></h4>
-		</div>
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
-		<h4><b>Building Name</b></h4>
-		</div>
-		<div class = "col-sm-2 col-md-2  col-xs-2 col-lg-2">
-		<h4><b>State</b></h4>
-		</div>
-		<div class = "col-sm-1 col-md-1  col-xs-1 col-lg-1 ">
-			<div id = "moreinfolink"><h5>More Info</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10" >
-			<div id = "agency-name"><h5>agency name</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3 ">
-			<div id = "facility-name"><h5>facility name</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3">
-			<div id = "building-name"><h5>building name</h5></div>
-		</div>
-		<div class = "col-sm-3 col-md-3  col-xs-3 col-lg-3">
-			<div id = "state-name"><h5>state name</h5></div>
-		</div>
-	</div>
-	<div class = "row" style="margin: 0%;background-color:white;">
-		<div id = "bar-chart-buildinfo">
-		</div>
-	</div>
-	<div class = "row" style="margin: 0px;background-color:white;">
-		<div id = "batteryflag" class = "col-sm-3 col-md-3 buildinf-greenred"><h3><b>Battery</b></h3></div>
-		<div id = "cogenflag" class = "col-sm-2 col-md-2 buildinf-greenred"><h3><b>CoGen</b></h3></div>
-		<div id = "emgenflag" class = "col-sm-2 col-md-2 buildinf-greenred"><h3><b>EmGen</b></h3></div>
-		<div id = "fuelcellflag" class = "col-sm-2 col-md-2 buildinf-greenred"><h3><b>FuelCell</b></h3></div>
-		<div id = "solarflag" class = "col-sm-3 col-md-2 buildinf-greenred"><h3><b>Solar</b></h3></div>
-	</div>
-	<div class = "row" style="margin: 0px;background-color:white;">
-		<div class = "col-md-4 col-sm-4 col-xs-4 col-lg-4 ">
-			<div class = "col-md-7 col-sm-7 col-xs-7 col-lg-7 " style="margin-top:10%">Primary Target Reason Code</div>
-			<div class = "col-md-5 col-sm-5 col-xs-5 col-lg-5 " style="margin-top:10%">
-				<div id ="ptrc"><h5>ad</h5></div>
+	<template>
+		<!-- Header section -->
+		<px-card style="padding:0px;background-color: #8b8d8f;">
+			<div class="row" style="margin: 0%;background-color:white;">
+				<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
+					<h4><b>Agency</b></h4>
+				</div>
+				<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
+					<h4><b>Facility Name</b></h4>
+				</div>
+				<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 ">
+					<h4><b>Building Name</b></h4>
+				</div>
+				<div class="col-sm-2 col-md-2  col-xs-2 col-lg-2">
+					<h4><b>State</b></h4>
+				</div>
+				<div class="col-sm-1 col-md-1  col-xs-1 col-lg-1 ">
+					<div id="moreinfolink">
+						<h5>More Info</h5>
+					</div>
+				</div>
+				<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
+					<div id="agency-name">
+						<h5>agency name</h5>
+					</div>
+				</div>
+				<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 ">
+					<div id="facility-name">
+						<h5>facility name</h5>
+					</div>
+				</div>
+				<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3">
+					<div id="building-name">
+						<h5>building name</h5>
+					</div>
+				</div>
+				<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3">
+					<div id="state-name">
+						<h5>state name</h5>
+					</div>
+				</div>
 			</div>
-			<div class = "col-md-7 col-sm-7 col-xs-7 col-lg-7" style="margin-top:10%">Secondary Target Reason Code</div>
-			<div class = "col-md-5 col-sm-5 col-xs-5 col-lg-5 " style="margin-top:10%;margin-bottom:10%">
-				<div id ="strc"><h5>ad</h5></div>
+			<div class="row" style="margin: 0%;background-color:white;">
+				<div id="bar-chart-buildinfo">
+				</div>
 			</div>
-		</div>
-		<div class = "col-sm-8 col-md-8 col-xs-8 col-lg-8 ">
-			<div class = "row" style="margin-top:1%;text-align:center;"><b>Agency Scorecard</b>
-				<div id = "circles_bottomright" class = "col-md-12 col-sm-12 col-xs-12 col-lg-12 "></div>
+			<!-- Mid DE measures section -->
+			<div class="row" style="margin: 0px;background-color:white;">
+				<div id="batteryflag" class="col-sm-3 col-md-3 buildinf-greenred">
+					<h3><b>Battery</b></h3>
+				</div>
+				<div id="cogenflag" class="col-sm-2 col-md-2 buildinf-greenred">
+					<h3><b>CoGen</b></h3>
+				</div>
+				<div id="emgenflag" class="col-sm-2 col-md-2 buildinf-greenred">
+					<h3><b>EmGen</b></h3>
+				</div>
+				<div id="fuelcellflag" class="col-sm-2 col-md-2 buildinf-greenred">
+					<h3><b>FuelCell</b></h3>
+				</div>
+				<div id="solarflag" class="col-sm-3 col-md-2 buildinf-greenred">
+					<h3><b>Solar</b></h3>
+				</div>
 			</div>
-		</div>
-	</div>
-  </template>
-  <script>
-    Polymer({
-      is: 'buildinginf-view',
-      properties: {},
-      attached: function() {
-		//buildingInf()
-		buildingInfCircles()
-		buildingInf()
-		console.log('buildinginf-view ready()')
-      }
-    });
-  </script>
+			<!-- Lower right section -->
+			<div class="row" style="margin: 0px;background-color:white;">
+				<div class="col-md-4 col-sm-4 col-xs-4 col-lg-4 ">
+					<div class="col-md-7 col-sm-7 col-xs-7 col-lg-7 " style="margin-top:10%">Primary Target Reason Code</div>
+					<div class="col-md-5 col-sm-5 col-xs-5 col-lg-5 " style="margin-top:10%">
+						<div id="ptrc">
+							<h5>ad</h5>
+						</div>
+					</div>
+					<div class="col-md-7 col-sm-7 col-xs-7 col-lg-7" style="margin-top:10%">Secondary Target Reason Code</div>
+					<div class="col-md-5 col-sm-5 col-xs-5 col-lg-5 " style="margin-top:10%;margin-bottom:10%">
+						<div id="strc">
+							<h5>ad</h5>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-8 col-md-8 col-xs-8 col-lg-8 ">
+					<div class="row" style="margin-top:1%;text-align:center;"><b>Agency Scorecard</b>
+						<div id="circles_bottomright" class="col-md-12 col-sm-12 col-xs-12 col-lg-12 "></div>
+					</div>
+				</div>
+			</div>
+		</px-card>
+	</template>
+	<script>
+		Polymer({
+			is: 'buildinginf-view',
+			properties: {},
+			attached: function () {
+				//Stage color buildingInf() section 
+				buildingInfCircles()
+				buildingInf()
+				console.log('buildinginf-view ready()')
+			}
+		});
+	</script>
 </dom-module>

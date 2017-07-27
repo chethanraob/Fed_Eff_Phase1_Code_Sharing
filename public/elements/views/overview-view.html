@@ -1,3 +1,17 @@
+<!-- 
+\# Title : Overview Tab 
+\# Created : July 17, 2017 5:30 PM 
+\# Author : Shilpa Suresh 
+\# This code creates a Overview tab featuring filtering options and different visualizations. 
+\# Revisions : 4
+\# Version : 0.12 
+\# Date : July 27, 2017 3:44 PM 
+\# Author : Aklank
+\# Changes : 
+\# * Added slider function
+-->
+<!-- Listing down the dependencies -->
+
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
 <link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
@@ -12,98 +26,107 @@
 
 <style include="px-theme-styles" is="custom-style"></style>
 
-
+<!-- Styling the px dropdowns -->
 <style is="custom-style">
-  :root{
-    --px-dropdown-text-color: white;
-	--px-dropdown-bg-color: cornflowerblue;
-	--px-dropdown-bg-color--hover: gray;
-	--px-dropdown-border-color: gray;
-	--px-slider-background-color: gray;
-	--px-slider-background-color--selected: cornflowerblue;
-	--px-dropdown-text-color : white;
-  }
+	:root {
+		--px-dropdown-text-color: white;
+		--px-dropdown-bg-color: cornflowerblue;
+		--px-dropdown-bg-color--hover: gray;
+		--px-dropdown-border-color: gray;
+		--px-slider-background-color: gray;
+		--px-slider-background-color--selected: cornflowerblue;
+		--px-dropdown-text-color: white;
+	}
 </style>
 
 <!-- Load d3.js and c3.js -->
 <script src="../../bower_components/d3/d3.min.js" charset="utf-8"></script>
 <script src="../../library/c3.min.js"></script>
+
+
 <dom-module id="overview-view">
 	<template>
 		<px-card style="height:800px;padding:0px;background-color: #8b8d8f;">
-			<!--<div class="row" style="margin: 0px">-->
 
-			<!--<div class="row">-->
 			<div class="col-sm-9 col-md-9">
 				<div class="row">
+					<!--Chart for populating state vs oppurtunity -->
 					<div class="col-sm-6 col-md-6 " style="margin-top:10px">
-						<div id = "statevsopp" class="chart-title font-header">State Wise Opportunities Distribution</div>
-						<div id="overchart" class = "overchart">
-							<div id="chartlefttop" class = "chartlefttop"></div>
+						<div id="statevsopp" class="chart-title font-header">State Wise Opportunities Distribution</div>
+						<div id="overchart" class="overchart">
+							<div id="chartlefttop" class="chartlefttop"></div>
 						</div>
 					</div>
 					<div class="col-sm-6 col-md-6 agency-state-name" style="width:410px;padding:0px;">
 						<div class="row core-margin-0">
-						<div class="col-sm-6 col-md-6 padding-5">
-							<div class="col-sm-12 col-md-12 core-padding-0 font-header">Facility Name</div>
-							<br>
-							<px-dropdown id="facility" display-value="All" checkbox-mode="true" search-mode="true">
-								<px-dropdown-content id="facilityName" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
-								 max-cont-character-width='10' items='[[dropDownNames]]'>
-								</px-dropdown-content>
-							</px-dropdown>
-						</div>
-						<div class="col-sm-6 col-md-6 padding-5">
-							<div class="col-sm-12 col-md-12 core-padding-0 font-header">Building Name</div>
-							<br>
-							<px-dropdown id="building" display-value="All" checkbox-mode="true" search-mode="true">
-								<px-dropdown-content id="buildingName" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
-								 max-cont-character-width='10' items='[[dropDownNames]]'>
-								</px-dropdown-content>
-							</px-dropdown>
-						</div>
-						
-						<div class="col-sm-12 col-md-12 padding-5 font-header total-score">Ranked List of Facilities-Total Score</div>
-						<div class="row padding-5  ">
-						<div class="col-sm-6 col-md-6  font-header num-opportunity">Number Of Opportunities</div>
-						<div id = "noOppurtunity" class="col-sm-6 col-md-6 font-header num-opportunity">2000</div>
-						</div>
-						<div class="col-sm-12 col-md-12 padding-5 font-header agency-state-header" style= "background-color: cornflowerblue">
-							<div class="col-sm-4 col-md-4 core-padding-0" style= "color: ghostwhite">Facility Name</div>
-							<div class="col-sm-3 col-md-3 core-padding-0" style= "color: ghostwhite">Building Name</div>
-							<div class="col-sm-2 col-md-2 core-padding-0" style= "color: ghostwhite">Agency</div>
-							<div class="col-sm-3 col-md-3 core-padding-0" style= "color: ghostwhite">Total Score</div>
-						</div>
+							<div class="col-sm-6 col-md-6 padding-5">
+								<!-- Dropdown for facility name -->
+								<div class="col-sm-12 col-md-12 core-padding-0 font-header">Facility Name</div>
+								<br>
+								<px-dropdown id="facility" display-value="All" checkbox-mode="true" search-mode="true">
+									<px-dropdown-content id="facilityName" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+									 max-cont-character-width='10' items='[[dropDownNames]]'>
+									</px-dropdown-content>
+								</px-dropdown>
+							</div>
+							<div class="col-sm-6 col-md-6 padding-5">
+								<!-- Dropdown for building name -->
+								<div class="col-sm-12 col-md-12 core-padding-0 font-header">Building Name</div>
+								<br>
+								<px-dropdown id="building" display-value="All" checkbox-mode="true" search-mode="true">
+									<px-dropdown-content id="buildingName" checkbox-mode='true' search-mode='true' extend-dropdown='true' extend-dropdown-by='25'
+									 max-cont-character-width='10' items='[[dropDownNames]]'>
+									</px-dropdown-content>
+								</px-dropdown>
+							</div>
+
+							<div class="col-sm-12 col-md-12 padding-5 font-header total-score">Ranked List of Facilities-Total Score</div>
+							<div class="row padding-5  ">
+
+								<!-- Count of no. of oppurtunities -->
+								<div class="col-sm-6 col-md-6  font-header num-opportunity">Number Of Opportunities</div>
+								<div id="noOppurtunity" class="col-sm-6 col-md-6 font-header num-opportunity">2000</div>
+							</div>
+							<!--table headers-->
+							<div class="col-sm-12 col-md-12 padding-5 font-header agency-state-header" style="background-color: cornflowerblue">
+								<div class="col-sm-4 col-md-4 core-padding-0" style="color: ghostwhite">Facility Name</div>
+								<div class="col-sm-3 col-md-3 core-padding-0" style="color: ghostwhite">Building Name</div>
+								<div class="col-sm-2 col-md-2 core-padding-0" style="color: ghostwhite">Agency</div>
+								<div class="col-sm-3 col-md-3 core-padding-0" style="color: ghostwhite">Total Score</div>
+							</div>
 						</div>
 						<div>
 						</div>
 						<px-spinner size="100" id="mid-table-loader"></px-spinner>
-						<div class="row" id= "agency-state-name-content">
-						<div id="table_building">
+						<!-- d3 table populated from the BE -->
+						<div class="row" id="agency-state-name-content">
+							<div id="table_building">
 
+							</div>
 						</div>
-					</div>
 					</div>
 				</div>
 				<div class="row">
-					<!--<div class="col-sm-9 col-md-9">-->
-                  <div class="map-container">
-					  <div class="map-header">Opportunities Map</div>
-					  <div>
+					<!--map-->
+					<div class="map-container">
+						<div class="map-header">Opportunities Map</div>
+						<div>
 						</div>
 						<px-spinner size="200" id="mid-map-loader"></px-spinner>
-					<div id="map2" class="map">
-						<div id="info"></div>
+						<div id="map2" class="map">
+							<div id="info"></div>
+						</div>
+						<div id="popup" class="ol-popup">
+							<a id="popup-closer" class="ol-popup-closer"></a>
+							<div id="popup-content"></div>
+						</div>
 					</div>
-					<div id="popup" class="ol-popup">
-						<a id="popup-closer" class="ol-popup-closer"></a>
-						<div id="popup-content"></div>
-					</div>
-                  </div>
 					<!--</div>-->
 
 				</div>
 			</div>
+
+			<!-- Right side dropdowns list-->
 			<div class="col-sm-3 col-md-3 agency-state-name pull-right core-padding-0">
 				<div class="col-sm-6 col-md-6 padding-5">
 					<div class="col-sm-12 col-md-12 core-padding-0 font-header">Agency</div>
@@ -206,10 +229,12 @@
 					</px-dropdown>
 				</div>
 				<div class="col-sm-12 col-md-12 core-padding-0">
-					<div class="col-sm-12 col-md-12 core-padding-0 font-header"><center>Gross Sq. Ft('000)</center></div>
-						<br>
-						<px-slider id="grossSqft" value="1" end-value="35000" max="40000" step="1" is-range="true" scale="linear" base="10" exponent="2" min-label-position="bottom"
-						 max-label-position="bottom"></px-slider>
+					<div class="col-sm-12 col-md-12 core-padding-0 font-header">
+						<center>Gross Sq. Ft ('000)</center>
+					</div>
+					<br>
+					<px-slider id="grossSqft" value="1" end-value="35000" max="40000" step="1" is-range="true" scale="linear" base="10" exponent="2"
+					 min-label-position="bottom" max-label-position="bottom"></px-slider>
 				</div>
 				<div class="col-sm-12 col-md-12 padding-5">
 					<div class="col-sm-12 col-md-12 core-padding-0 font-header">Stage 1& 2 GHG Emissions</div>
@@ -248,7 +273,7 @@
 					</px-dropdown>
 				</div>
 				<div class="col-sm-12 col-md-12 padding-15">
-					<button type="button" id="applyButton" style ="margin-right:20px"; class="btn" on-click="confirmFilters()">Apply</button>
+					<button type="button" id="applyButton" style="margin-right:20px" ; class="btn" on-click="confirmFilters()">Apply</button>
 					<button type="button" id="cancelButton" class="btn" on-click="confirmFilters()">Cancel</button>
 				</div>
 			</div>
@@ -264,7 +289,7 @@
 			is: 'overview-view',
 			properties: {},
 			attached: function () {
-				
+
 				secondfunction()
 				console.log('overview-view ready()')
 
