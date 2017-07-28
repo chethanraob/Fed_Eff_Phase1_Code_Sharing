@@ -520,7 +520,7 @@ app.get('/DataTable', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score"  FROM "FedEff"."Data_Directory_v10_Predix_07242017"  ORDER BY "Total_Mu_Sigma_Score" LIMIT 1000;', function (err, result) {
+		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score"  FROM "FedEff"."Data_Directory_v10_Predix_07242017"  ORDER BY "Total_Mu_Sigma_Score" LIMIT 1000;', function (err, result) {
 			var response;
 			if (err) {
 				return console.error('error running query', err);

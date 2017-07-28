@@ -1270,6 +1270,106 @@ src: 'https://openlayers.org/en/v4.2.0/examples/data/dot.png'
 
 }
 
+//Function to populate Building info tab 2 by requesting data based on  building selection
+function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
+	//document.getElementById("agency-name-mi").innerHTML = aName
+     document.getElementById("facility-name-mi").innerHTML = fName
+     document.getElementById("building-name-mi").innerHTML = bName
+     document.getElementById("state-name-mi").innerHTML = sName
+	 
+	 document.getElementById("max-ts").innerHTML = maxTotScore
+	 document.getElementById("fv-ts").innerHTML = facilityTotScore
+		var scoreType='Total Mu Sigma Score'
+	var chart = c3.generate({
+		bindto: "#svpgraph",
+    data: {
+        columns: [
+            ['data1', 10, 20, 30, 40, 50, 60],
+            ['data2', 0.1, 0.3, 0.6, 0.8, 0.9, 1]
+        ],
+        type: 'spline'
+		},
+	axis: {
+          x: {
+             label: {
+                    text: scoreType,
+                    position: 'outer-middle'
+                    }
+             },
+          y: {
+             label: {
+                    text: 'Percentile',
+                    position: 'outer-center'
+                    }
+             }
+		}
+	});
+		console.log("flag0")
+		if(buildingMIStarted==0)
+		{
+			buildingMIStarted=1;
+		makeRequest('GET', '/BuildingMoreInfoMaxMed', function (err, data) {
+			console.log("success");
+			console.log(data)
+            result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+            console.log(result_data)
+          //maximum 
+			document.getElementById("max-is").innerHTML = result_data[0].max_eis
+			document.getElementById("max-us").innerHTML = result_data[0].max_ecs
+			document.getElementById("max-sfs").innerHTML = result_data[0].max_sas
+			document.getElementById("max-nb").innerHTML = result_data[0].max_nb
+			document.getElementById("max-bme").innerHTML = result_data[0].max_bme
+			document.getElementById("max-sf").innerHTML = result_data[0].max_ssf
+			document.getElementById("max-aeu").innerHTML = result_data[0].max_aec
+			document.getElementById("max-ei").innerHTML = result_data[0].max_ei
+			document.getElementById("max-pl").innerHTML = result_data[0].max_pl
+			document.getElementById("max-aes").innerHTML = result_data[0].max_aes
+			document.getElementById("max-tsdp").innerHTML = result_data[0].max_tsdp
+		//median
+			document.getElementById("med-is").innerHTML = result_data[0].med_eis
+			document.getElementById("med-us").innerHTML = result_data[0].med_ecs
+			document.getElementById("med-sfs").innerHTML = result_data[0].med_sas
+			document.getElementById("med-nb").innerHTML = result_data[0].med_nb
+			document.getElementById("med-bme").innerHTML = result_data[0].med_bme
+			document.getElementById("med-sf").innerHTML = result_data[0].med_ssf
+			document.getElementById("med-aeu").innerHTML = result_data[0].med_aec
+			document.getElementById("med-ei").innerHTML = result_data[0].med_ei
+			document.getElementById("med-pl").innerHTML = result_data[0].med_pl
+			document.getElementById("med-aes").innerHTML = result_data[0].med_aes
+			document.getElementById("med-tsdp").innerHTML = result_data[0].med_tsdp
+			});
+		}	/*makeRequest('GET', '/buildingInf/'+buildingName, function(err, data) {*/
+		makeRequest('GET', '/BuildingMoreInfoBdngLevel/'+buildingName, function (err, data) {
+			console.log("success");
+			console.log(data)
+            result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+            console.log(result_data)
+			document.getElementById("address").innerHTML = result_data[0].Address
+			document.getElementById("fv-aes").innerHTML = result_data[0].Annual_Energy_Spending_Comm
+			document.getElementById("fv-aeu").innerHTML = result_data[0].Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft
+			document.getElementById("poc").innerHTML = result_data[0].Contact_Name
+			document.getElementById("contact").innerHTML = result_data[0].Contact_Number
+			document.getElementById("exeloncust").innerHTML = result_data[0].Current_Customer
+			document.getElementById("fv-tsdp").innerHTML = result_data[0].Data_added_on
+			document.getElementById("fv-us").innerHTML = result_data[0].Energy_Consumption_Score
+			document.getElementById("fv-is").innerHTML = result_data[0].Energy_Intensity_Score
+			document.getElementById("intdata").innerHTML = result_data[0].Interval_data_availability
+			document.getElementById("fv-bme").innerHTML = result_data[0].Number_Of_Buildings_Metered_For_Electricity
+			document.getElementById("fv-nb").innerHTML = result_data[0].Number_Of_Buildings
+			document.getElementById("fv-pl").innerHTML = result_data[0].Peak_kW
+			document.getElementById("uesc-espc").innerHTML = result_data[0].Possible_Contracting_Vehicle
+			document.getElementById("fv-sfs").innerHTML = result_data[0].Site_Area_Score
+			document.getElementById("fv-sf").innerHTML = result_data[0].Site_Sq_ft
+			document.getElementById("fv-ts").innerHTML = result_data[0].Total_Mu_Sigma_Score
+			document.getElementById("utility").innerHTML = result_data[0].Utility_Partner
+			});
+	 
+		
+}
+
+
 //Function to draw circles in the building info tab 1
 function buildingInfCircles() {
     dataJson = [{ "id": "circle12ghg", "cx": 100, "label": "Stage 1&2 GHG Emissions" }, { "id": "circle3ghg", "cx": 300, "label": "Stage 3 GHG Emissions" }, { "id": "circlereduction", "cx": 500, "label": "Reduction in Energy Intensity" }, { "id": "circleusage", "cx": 700, "label": "Usage of Renewable Energy" }]
