@@ -1279,13 +1279,28 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
 	 
 	 document.getElementById("max-ts").innerHTML = maxTotScore
 	 document.getElementById("fv-ts").innerHTML = facilityTotScore
-		var scoreType='Total Mu Sigma Score'
+	 var scoresData = ['Scores'];
+	 var percentileData = ['Percentile Value'];
+	 var scoreType='Total_Mu_Sigma_Score'
+	 makeRequest('GET', '/scorePercentileGraph/'+scoreType, function (err, data) {
+			console.log("success");
+			console.log(data)
+            result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+            console.log(result_data)
+			for(i=0;i<result_data.length;i++)
+				{
+				scoresData.push(result_data[i].Total_Mu_Sigma_Score);
+				percentileData.push(result_data[i].cume_dist);
+				}
+		
 	var chart = c3.generate({
 		bindto: "#svpgraph",
     data: {
+		x:'Scores',
         columns: [
-            ['data1', 10, 20, 30, 40, 50, 60],
-            ['data2', 0.1, 0.3, 0.6, 0.8, 0.9, 1]
+            scoresData,
+            percentileData
         ],
         type: 'spline'
 		},
@@ -1302,7 +1317,11 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
                     position: 'outer-center'
                     }
              }
+		},
+	legend: {
+        show: false
 		}
+	});
 	});
 		console.log("flag0")
 		if(buildingMIStarted==0)

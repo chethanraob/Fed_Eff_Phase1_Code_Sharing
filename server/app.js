@@ -460,6 +460,35 @@ app.get('/BuildingMoreInfoMaxMed', function (req, res) {
 	});
 });
 
+//Building info tab 2 - getting scores to draw the graph
+app.get('/scorePercentileGraph/:scoreType', function (req, res) {
+	var scoreType = req.params.scoreType;
+	var scoreTypeString = '\'' + scoreType.toString() + '\''
+	var client = new pg.Client(conString);
+	client.connect(function (err, client, done) {
+		if (err) {
+			return console.error('error fetching client from pool', err);
+		}
+
+		var query = client.query(' SELECT \"'+scoreType+'\",CUME_DIST() OVER(ORDER BY \"'+scoreType+'\") FROM "FedEff"."Data_Directory_v10_Predix_07242017" ', function (err, result) {
+
+			var response;
+
+			if (err) {
+				return console.error('error running query', err);
+			}
+			res.send({
+				data: JSON.stringify(result.rows)
+			});
+		});
+		query.on('end', function () {
+			client.end();
+			res.end();
+		});
+	});
+});
+
+
 //Building info tab 1 - getting building level info
 app.get('/buildingInf/:buildingName', function (req, res) {
 	var buildingName = req.params.buildingName;
