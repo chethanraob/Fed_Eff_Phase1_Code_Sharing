@@ -387,7 +387,7 @@ app.post('/DataTableFiltered', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score","Latitude","Longitude" FROM "FedEff"."Data_Directory_v10_Predix_07242017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Total_Mu_Sigma_Score" DESC', function (err, result) {
+		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score","Latitude","Longitude" FROM "FedEff"."Data_Directory_v10_Predix_07242017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Total_Mu_Sigma_Score" DESC', function (err, result) {
 			console.log(query);
 			var response;
 
@@ -542,7 +542,7 @@ app.get('/chartTable', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT "State_Name",COUNT(*) as "Opportunities" FROM "FedEff"."Data_Directory_v10_Predix_07242017" GROUP BY "State_Name" ORDER BY "Opportunities"', function (err, result) {
+		var query = client.query(' SELECT "State_Name",COUNT(*) as "Opportunities" FROM "FedEff"."Data_Directory_v10_Predix_07242017" GROUP BY "State_Name" ORDER BY "Opportunities" DESC', function (err, result) {
 			var response;
 			if (err) {
 				return console.error('error running query', err);

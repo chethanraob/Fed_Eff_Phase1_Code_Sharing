@@ -2312,17 +2312,17 @@ document.getElementById("statepolicy_State_content").addEventListener("px-dropdo
 
             }
         }
-        for (j = 0; j < selectedstate; j++) {
+        for (j = 0; j < selectedstate.length; j++) {
             for (i = 0; i < regulationdata.length; i++) {
 
                 if (selectedstate[j] == regulationdata[i].State) {
                     filterdata.push(regulationdata[i]);
-                    break;
+                   
                 }
 
             }
         }
-        console.log(selectedstate)
+        drawTable_policy(filterdata)
 
     }
 
