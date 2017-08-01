@@ -187,7 +187,8 @@ Array.prototype.unique = function () {
 //function to draw the left top chart in Overview tab(StateVSOpportunities) and in State view tab (AgencyVSOpportunities)
 function drawChartLeftTop(filterData, opportunitiesData, stateNamesData, chartId) {
     //Initialising number of states and agencies
-    var numStates = 57, numAgencies = 26;
+    var numStates = 57;
+	if(chartId == "chartlefttop_agency") {numStates=26;}
 
     //Parsing data to be in an Array object	
     filterData = JSON.parse(JSON.parse(filterData).data)
@@ -275,6 +276,7 @@ function drawChartLeftTop(filterData, opportunitiesData, stateNamesData, chartId
         { show: false }
     });
 }
+
 
 
 //Function attached with the state view
@@ -1271,23 +1273,97 @@ src: 'https://openlayers.org/en/v4.2.0/examples/data/dot.png'
 }
 
 //Function to populate Building info tab 2 by requesting data based on  building selection
-function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
-	//document.getElementById("agency-name-mi").innerHTML = aName
-     document.getElementById("facility-name-mi").innerHTML = fName
-     document.getElementById("building-name-mi").innerHTML = bName
-     document.getElementById("state-name-mi").innerHTML = sName
-	 
-	 document.getElementById("max-ts").innerHTML = maxTotScore
-	 document.getElementById("fv-ts").innerHTML = facilityTotScore
+function buildingMoreInfo(maxTotScore,facilityTotScore){
+	
 	 var scoresData = ['Scores'];
 	 var percentileData = ['Percentile Value'];
+	 
+	
 	 var scoreType='Total_Mu_Sigma_Score'
-	 makeRequest('GET', '/scorePercentileGraph/'+scoreType, function (err, data) {
-			console.log("success");
-			console.log(data)
-            result_data=JSON.parse(data)
+	 document.getElementById("scorevspercentile").addEventListener("px-dropdown-value-changed",function(evt){
+		scoreType = evt.detail.key
+		scoresData = ['Scores'];
+		percentileData = ['Percentile Value'];
+	 
+		makeRequest('GET', '/scorePercentileGraph/'+scoreType, function (err, data) {
+			result_data=JSON.parse(data)
             result_data=JSON.parse(result_data.data)
-            console.log(result_data)
+            
+			if(scoreType == 'Total_Mu_Sigma_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Total_Mu_Sigma_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Site_Area_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Site_Area_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Energy_Profile_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Energy_Profile_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Energy_Consumption_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Energy_Consumption_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Energy_Intensity_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Energy_Intensity_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+	var chart = c3.generate({
+		bindto: "#svpgraph",
+    data: {
+		x:'Scores',
+        columns: [
+            scoresData,
+            percentileData
+        ],
+        type: 'spline'
+		},
+	axis: {
+          x: {
+             label: {
+                    text: scoreType,
+                    position: 'outer-middle'
+                    }
+             },
+          y: {
+             label: {
+                    text: 'Percentile',
+                    position: 'outer-center'
+                    }
+             }
+		},
+	legend: {
+        show: false
+		}
+	});
+	});
+	 });
+	 
+	 makeRequest('GET', '/scorePercentileGraph/'+scoreType, function (err, data) {
+			result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+            
 			for(i=0;i<result_data.length;i++)
 				{
 				scoresData.push(result_data[i].Total_Mu_Sigma_Score);
@@ -1328,11 +1404,9 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
 		{
 			buildingMIStarted=1;
 		makeRequest('GET', '/BuildingMoreInfoMaxMed', function (err, data) {
-			console.log("success");
-			console.log(data)
-            result_data=JSON.parse(data)
+			result_data=JSON.parse(data)
             result_data=JSON.parse(result_data.data)
-            console.log(result_data)
+            
           //maximum 
 			document.getElementById("max-is").innerHTML = result_data[0].max_eis
 			document.getElementById("max-us").innerHTML = result_data[0].max_ecs
@@ -1340,6 +1414,7 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
 			document.getElementById("max-nb").innerHTML = result_data[0].max_nb
 			document.getElementById("max-bme").innerHTML = result_data[0].max_bme
 			document.getElementById("max-sf").innerHTML = result_data[0].max_ssf
+			document.getElementById("max-ts").innerHTML = result_data[0].max_ts
 			document.getElementById("max-aeu").innerHTML = result_data[0].max_aec
 			document.getElementById("max-ei").innerHTML = result_data[0].max_ei
 			document.getElementById("max-pl").innerHTML = result_data[0].max_pl
@@ -1347,6 +1422,7 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
 			document.getElementById("max-tsdp").innerHTML = result_data[0].max_tsdp
 		//median
 			document.getElementById("med-is").innerHTML = result_data[0].med_eis
+			document.getElementById("med-ts").innerHTML = result_data[0].med_ts
 			document.getElementById("med-us").innerHTML = result_data[0].med_ecs
 			document.getElementById("med-sfs").innerHTML = result_data[0].med_sas
 			document.getElementById("med-nb").innerHTML = result_data[0].med_nb
@@ -1356,18 +1432,22 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
 			document.getElementById("med-ei").innerHTML = result_data[0].med_ei
 			document.getElementById("med-pl").innerHTML = result_data[0].med_pl
 			document.getElementById("med-aes").innerHTML = result_data[0].med_aes
-			document.getElementById("med-tsdp").innerHTML = result_data[0].med_tsdp
+			//document.getElementById("med-tsdp").innerHTML = result_data[0].med_tsdp
 			});
 		}	/*makeRequest('GET', '/buildingInf/'+buildingName, function(err, data) {*/
 		makeRequest('GET', '/BuildingMoreInfoBdngLevel/'+buildingName, function (err, data) {
-			console.log("success");
-			console.log(data)
-            result_data=JSON.parse(data)
+			result_data=JSON.parse(data)
             result_data=JSON.parse(result_data.data)
-            console.log(result_data)
+            
+			document.getElementById("agency-name-mi1").innerHTML = result_data[0].Agency
+			document.getElementById("facility-name-mi").innerHTML = result_data[0].Facility_Name
+			document.getElementById("building-name-mi").innerHTML = result_data[0].Building_Name
+			document.getElementById("state-name-mi").innerHTML = result_data[0].State_Name
+	 
 			document.getElementById("address").innerHTML = result_data[0].Address
 			document.getElementById("fv-aes").innerHTML = result_data[0].Annual_Energy_Spending_Comm
-			document.getElementById("fv-aeu").innerHTML = result_data[0].Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft
+			document.getElementById("fv-aeu").innerHTML = result_data[0].Annual_Energy_Consumption_Mbtu
+			document.getElementById("fv-ei").innerHTML = result_data[0].Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft
 			document.getElementById("poc").innerHTML = result_data[0].Contact_Name
 			document.getElementById("contact").innerHTML = result_data[0].Contact_Number
 			document.getElementById("exeloncust").innerHTML = result_data[0].Current_Customer
@@ -1376,7 +1456,7 @@ function buildingMoreInfo(aName,fName,bName,sName,maxTotScore,facilityTotScore){
 			document.getElementById("fv-is").innerHTML = result_data[0].Energy_Intensity_Score
 			document.getElementById("intdata").innerHTML = result_data[0].Interval_data_availability
 			document.getElementById("fv-bme").innerHTML = result_data[0].Number_Of_Buildings_Metered_For_Electricity
-			document.getElementById("fv-nb").innerHTML = result_data[0].Number_Of_Buildings
+			document.getElementById("fv-nb").innerHTML = result_data[0].Number_of_Buildings
 			document.getElementById("fv-pl").innerHTML = result_data[0].Peak_kW
 			document.getElementById("uesc-espc").innerHTML = result_data[0].Possible_Contracting_Vehicle
 			document.getElementById("fv-sfs").innerHTML = result_data[0].Site_Area_Score
