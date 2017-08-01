@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="../../css/buildingmoreinfo-view.css">
 <link rel="stylesheet" href="../../css/common.style.css">
 <link rel="stylesheet" href="../../css/buildingmoreinfo-view.css">
+<link rel="stylesheet" href="../../css/comparisonview2.css">
 <link rel="stylesheet" href="../../css/common.style.css">
 <link rel="stylesheet" href="../../css/main-page.style.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
@@ -125,6 +126,17 @@
             element-href="/elements/views/buildingmoreinfo-view.html">
           </px-view>
 		  
+		   <!-- /building comparison route and view -->
+          <app-route
+            route="[[_route]]"
+            pattern="/buildingmorecomparison"
+            active="{{_buildingmorecomparisonActive}}">
+          </app-route>
+          <px-view
+            active="[[_buildingmorecomparisonActive]]"
+            element-href="/elements/views/buildingmorecomparison-view.html">
+          </px-view>
+		  
 		   <!-- /building more info route and view -->
           <app-route
             route="[[_route]]"
@@ -192,7 +204,7 @@
               "icon": "fa-sitemap"
             }, {
               "label": "Building Comparison",
-              "path": "/buildingcomparison",
+              "path": "/buildingmorecomparison",
               "icon": "fa-line-chart"
             }
 			

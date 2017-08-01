@@ -1,0 +1,101 @@
+<!-- 
+\# Title : Building Comparison Tab 2 
+\# Created : August 1, 2017 5:30 PM 
+\# Author : Shivnesh
+\# This code creates a Building Comparison Tab 2 that compares stats of two buildings
+-->
+<!-- Listing down the dependencies -->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/px-sample-cards/blank-card.html">
+<link rel="import" href="../../bower_components/px-view-header/px-view-header.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown-content.html">
+<link rel="import" href="../../bower_components/px-slider/px-slider.html">
+<link rel="import" href="../../bower_components/px-spinner/px-spinner.html">
+<link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css">
+<script src="https://openlayers.org/en/v4.2.0/build/ol.js" type="text/javascript"></script>
+<script src="../script/coreFile-maps.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.0.0.js"></script>
+
+<style include="px-theme-styles" is="custom-style"></style>
+
+<!-- Styling the px dropdowns -->
+<style is="custom-style">
+	:root {
+		--px-dropdown-text-color: white;
+		--px-dropdown-bg-color: cornflowerblue;
+		--px-dropdown-bg-color--hover: gray;
+		--px-dropdown-border-color: gray;
+		--px-slider-background-color: gray;
+		--px-slider-background-color--selected: cornflowerblue;
+		--px-dropdown-text-color: white;
+	}
+</style>
+
+<!-- Load d3.js and c3.js -->
+<script src="../../bower_components/d3/d3.min.js" charset="utf-8"></script>
+<script src="../../library/c3.min.js"></script>
+
+
+<dom-module id="buildingmorecomparison-view">
+	<template>
+		<px-card style="height:800px;padding:0px;background-color: #8b8d8f;">
+
+			<div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
+				<div class="row">
+					<div class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>Facility Name</b></h4>
+					</div>
+					<div id = "facility1" class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+					<h4><b>facility1</b></h4>
+					</div>
+					<div class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>Building Name</b></h4>
+					</div>
+					<div id = "building1" class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>building1</b></h4>
+					</div>
+				</div>
+				<div class="row">
+					<div id = "bcgraph1" class = "bcgraph"></div>
+				</div>
+			</div>
+			<div class="col-sm-2 col-md-2 col-xs-2 col-lg-2">
+			</div>
+			<div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
+				<div class="row">
+					<div class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>Facility Name</b></h4>
+					</div>
+					<div id = "facility2" class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>facility2</b></h4>
+					</div>
+					<div class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>Building Name</b></h4>
+					</div>
+					<div id = "building2" class="col-sm-6 col-md-6 col-xs-6 col-lg-6 padding-left-10">
+						<h4><b>building2</b></h4>
+					</div>
+				</div>
+				<div class="row">
+					<div id = "bcgraph2" class = "bcgraph">
+				</div>
+				</div>
+			</div>
+			
+		</px-card>
+	</template>
+	<script>
+		Polymer({
+			is: 'buildingmorecomparison-view',
+			properties: {},
+			attached: function () {
+
+				secondfunction()
+				console.log('overview-view ready()')
+
+			}
+		});
+	</script>
+</dom-module>

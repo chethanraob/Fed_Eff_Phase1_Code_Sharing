@@ -258,151 +258,152 @@ app.get('/scorecard', function (req, res) {
 //call to get filtered scorecard and total score 
 
 app.post('/scoreCardFiltered', function (req, res) {
-	console.log('m in filters');
-	var agency = req.body.agency;
-	var state = req.body.state;
-	var utility = req.body.utility;
-	var data = req.body.data;
-	var customer = req.body.customer;
-	var contract = req.body.contract;
-	var solar = req.body.solar;
-	var emgen = req.body.emgen;
-	var battery = req.body.battery;
-	var cogen = req.body.cogen;
-	var fuel = req.body.fuelcell;
-	var stage = req.body.stage;
-	var stage3 = req.body.stage3;
-	var energy = req.body.energy;
-	var renewable = req.body.renewable;
-	var startftvalue = req.body.startftvalue;
-	var endftvalue = req.body.endftvalue;
-	var agencyOutput;
-	var stateOutput;
-	var utilityOutput;
-	var customerOutput;
-	var stageOutput;
-	var stage3Output;
-	var renewableOutput;
-	var energyOutput;
-	var fuelOutput;
-	var dataOutput;
-	var contractOutput;
-	var cogenOutput;
-	var batteryOutput;
-	var solarOutput;
-	var emgenOutput;
-	agency = agency.toString();
-	agency = agency.split(',');
-	for (x in agency) {
-		agency[x] = '\'' + agency[x] + '\'';
-	}
-	agencyOutput = "(" + agency.join(',') + ")";
-	state = state.toString();
-	state = state.split(',');
-	for (x in state) {
-		state[x] = '\'' + state[x] + '\'';
-	}
-	stateOutput = "(" + state.join(',') + ")";
-	utility = utility.toString();
-	utility = utility.split(',');
-	for (x in utility) {
-		utility[x] = '\'' + utility[x] + '\'';
-	}
-	utilityOutput = "(" + utility.join(',') + ")";
-	stage = stage.toString();
-	stage = stage.split(',');
-	for (x in stage) {
-		stage[x] = '\'' + stage[x] + '\'';
-	}
-	stageOutput = "(" + stage.join(',') + ")";
-	stage3 = stage3.toString();
-	stage3 = stage3.split(',');
-	for (x in stage3) {
-		stage3[x] = '\'' + stage3[x] + '\'';
-	}
-	stage3Output = "(" + stage3.join(',') + ")";
-	customer = customer.toString();
-	customer = customer.split(',');
-	for (x in customer) {
-		customer[x] = '\'' + customer[x] + '\'';
-	}
-	customerOutput = "(" + customer.join(',') + ")";
-	fuel = fuel.toString();
-	fuel = fuel.split(',');
-	for (x in fuel) {
-		fuel[x] = '\'' + fuel[x] + '\'';
-	}
-	fuelOutput = "(" + fuel.join(',') + ")";
-	energy = energy.toString();
-	energy = energy.split(',');
-	for (x in energy) {
-		energy[x] = '\'' + energy[x] + '\'';
-	}
-	energyOutput = "(" + energy.join(',') + ")";
-	renewable = renewable.toString();
-	renewable = renewable.split(',');
-	for (x in renewable) {
-		renewable[x] = '\'' + renewable[x] + '\'';
-	}
-	renewableOutput = "(" + renewable.join(',') + ")";
-	data = data.toString();
-	data = data.split(',');
-	for (x in data) {
-		data[x] = '\'' + data[x] + '\'';
-	}
-	dataOutput = "(" + data.join(',') + ")";
-	contract = contract.toString();
-	contract = contract.split(',');
-	for (x in contract) {
-		contract[x] = '\'' + contract[x] + '\'';
-	}
-	contractOutput = "(" + contract.join(',') + ")";
-	cogen = cogen.toString();
-	cogen = cogen.split(',');
-	for (x in cogen) {
-		cogen[x] = '\'' + cogen[x] + '\'';
-	}
-	cogenOutput = "(" + cogen.join(',') + ")";
-	battery = battery.toString();
-	battery = battery.split(',');
-	for (x in battery) {
-		battery[x] = '\'' + battery[x] + '\'';
-	}
-	batteryOutput = "(" + battery.join(',') + ")";
-	solar = solar.toString();
-	solar = solar.split(',');
-	for (x in solar) {
-		solar[x] = '\'' + solar[x] + '\'';
-	}
-	solarOutput = "(" + solar.join(',') + ")";
-	emgen = emgen.toString();
-	emgen = emgen.split(',');
-	for (x in emgen) {
-		emgen[x] = '\'' + emgen[x] + '\'';
-	}
-	emgenOutput = "(" + emgen.join(',') + ")";
-	//customer = customer.toString();
-	var client = new pg.Client(conString);
-	client.connect(function (err, client, done) {
-		if (err) {
-			return console.error('error fetching client from pool', err);
-		}
-		var query = client.query(' SELECT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency", "Stage_1_2_GHG_emissions", "Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy", COUNT(*) AS "Count" , AVG("Total_Mu_Sigma_Score") AS "Total_Score" FROM "FedEff"."Data_Directory_v12_Predix_07312017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' GROUP BY "Agency" ORDER BY "Total_Mu_Sigma_Score" DESC', function (err, result) {
-			var response;
+    console.log('m in filters');
+    var agency = req.body.agency;
+    var state = req.body.state;
+    var utility = req.body.utility;
+    var data = req.body.data;
+    var customer = req.body.customer;
+    var contract = req.body.contract;
+    var solar = req.body.solar;
+    var emgen = req.body.emgen;
+    var battery = req.body.battery;
+    var cogen = req.body.cogen;
+    var fuel = req.body.fuelcell;
+    var stage = req.body.stage;
+    var stage3 = req.body.stage3;
+    var energy = req.body.energy;
+    var renewable = req.body.renewable;
+    var startftvalue = req.body.startftvalue;
+    var endftvalue = req.body.endftvalue;
+    var agencyOutput;
+    var stateOutput;
+    var utilityOutput;
+    var customerOutput;
+    var stageOutput;
+    var stage3Output;
+    var renewableOutput;
+    var energyOutput;
+    var fuelOutput;
+    var dataOutput;
+    var contractOutput;
+    var cogenOutput;
+    var batteryOutput;
+    var solarOutput;
+    var emgenOutput;
+    agency = agency.toString();
+    agency = agency.split(',');
+    for (x in agency) {
+        agency[x] = '\'' + agency[x] + '\'';
+    }
+    agencyOutput = "(" + agency.join(',') + ")";
+    state = state.toString();
+    state = state.split(',');
+    for (x in state) {
+        state[x] = '\'' + state[x] + '\'';
+    }
+    stateOutput = "(" + state.join(',') + ")";
+    utility = utility.toString();
+    utility = utility.split(',');
+    for (x in utility) {
+        utility[x] = '\'' + utility[x] + '\'';
+    }
+    utilityOutput = "(" + utility.join(',') + ")";
+    stage = stage.toString();
+    stage = stage.split(',');
+    for (x in stage) {
+        stage[x] = '\'' + stage[x] + '\'';
+    }
+    stageOutput = "(" + stage.join(',') + ")";
+    stage3 = stage3.toString();
+    stage3 = stage3.split(',');
+    for (x in stage3) {
+        stage3[x] = '\'' + stage3[x] + '\'';
+    }
+    stage3Output = "(" + stage3.join(',') + ")";
+    customer = customer.toString();
+    customer = customer.split(',');
+    for (x in customer) {
+        customer[x] = '\'' + customer[x] + '\'';
+    }
+    customerOutput = "(" + customer.join(',') + ")";
+    fuel = fuel.toString();
+    fuel = fuel.split(',');
+    for (x in fuel) {
+        fuel[x] = '\'' + fuel[x] + '\'';
+    }
+    fuelOutput = "(" + fuel.join(',') + ")";
+    energy = energy.toString();
+    energy = energy.split(',');
+    for (x in energy) {
+        energy[x] = '\'' + energy[x] + '\'';
+    }
+    energyOutput = "(" + energy.join(',') + ")";
+    renewable = renewable.toString();
+    renewable = renewable.split(',');
+    for (x in renewable) {
+        renewable[x] = '\'' + renewable[x] + '\'';
+    }
+    renewableOutput = "(" + renewable.join(',') + ")";
+    data = data.toString();
+    data = data.split(',');
+    for (x in data) {
+        data[x] = '\'' + data[x] + '\'';
+    }
+    dataOutput = "(" + data.join(',') + ")";
+    contract = contract.toString();
+    contract = contract.split(',');
+    for (x in contract) {
+        contract[x] = '\'' + contract[x] + '\'';
+    }
+    contractOutput = "(" + contract.join(',') + ")";
+    cogen = cogen.toString();
+    cogen = cogen.split(',');
+    for (x in cogen) {
+        cogen[x] = '\'' + cogen[x] + '\'';
+    }
+    cogenOutput = "(" + cogen.join(',') + ")";
+    battery = battery.toString();
+    battery = battery.split(',');
+    for (x in battery) {
+        battery[x] = '\'' + battery[x] + '\'';
+    }
+    batteryOutput = "(" + battery.join(',') + ")";
+    solar = solar.toString();
+    solar = solar.split(',');
+    for (x in solar) {
+        solar[x] = '\'' + solar[x] + '\'';
+    }
+    solarOutput = "(" + solar.join(',') + ")";
+    emgen = emgen.toString();
+    emgen = emgen.split(',');
+    for (x in emgen) {
+        emgen[x] = '\'' + emgen[x] + '\'';
+    }
+    emgenOutput = "(" + emgen.join(',') + ")";
+    //customer = customer.toString();
+    var client = new pg.Client(conString);
+    client.connect(function (err, client, done) {
+        if (err) {
+            return console.error('error fetching client from pool', err);
+        }
+        var query = client.query(' SELECT DISTINCT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency", "Stage_1_2_GHG_emissions", "Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy" FROM "FedEff"."Data_Directory_v12_Predix_07312017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Agency" ASC', function (err, result) {
+            var response;
 
-			if (err) {
-				return console.error('error running query', err);
-			}
-			res.send({
-				data: JSON.stringify(result.rows)
-			});
-		});
-		query.on('end', function () {
-			client.end();
-			res.end();
-		});
-	});
+            if (err) {
+                return console.error('error running query', err);
+            }
+            res.send({
+                data: JSON.stringify(result.rows)
+            });
+        });
+        query.on('end', function () {
+            client.end();
+            res.end();
+        });
+    });
 });
+
 //call to get data on apply of filters for all overview and state tab
 app.post('/DataTableFiltered', function (req, res) {
 	// : selectedCustomer :selectedState :selectedUtility :selectedData :selectedContract :selectedSolar :selectedEmgen :selectedBattery :selectedCogen :selectedFuel :selectedStage :selectedStage3 :selectedEnergy :selectedRenewable', function (req, res) {

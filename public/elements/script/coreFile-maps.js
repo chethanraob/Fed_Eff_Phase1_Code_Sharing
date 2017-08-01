@@ -191,8 +191,7 @@ Array.prototype.unique = function () {
 function drawChartLeftTop(filterData, opportunitiesData, stateNamesData, chartId) {
     //Initialising number of states and agencies
     var numStates = 57;
-	if(chartId == "chartlefttop_agency") {numStates=26;}
-
+	if(chartId == "chartlefttop_agency" || chartId == "chartlefttop_agencyview") {numStates=26;}
     //Parsing data to be in an Array object	
     filterData = JSON.parse(JSON.parse(filterData).data)
     var filteredStateNames = ['StateNames'];
@@ -201,10 +200,10 @@ function drawChartLeftTop(filterData, opportunitiesData, stateNamesData, chartId
     for (j = 0; j < filterData.length; j++) {
         if (chartId == "chartlefttop")
         { filteredStateNames.push(filterData[j].State_Name); }
-        else if (chartId == "chartlefttop_agency")
+        else //if (chartId == "chartlefttop_agency")
         { filteredStateNames.push(filterData[j].Agency); }
-
-    }
+	    
+	}
     filteredStateNames = filteredStateNames.unique();
 
     //Getting opportunities for the selected list of states or agencies
@@ -226,7 +225,7 @@ function drawChartLeftTop(filterData, opportunitiesData, stateNamesData, chartId
     var innerChartHeight;
     if (chartId == "chartlefttop")
     { innerChartHeight = numStates * 21; }
-    else if (chartId == "chartlefttop_agency")
+    else //if (chartId == "chartlefttop_agency")
     { innerChartHeight = numStates * 19; }
     if (innerChartHeight < 400)
     { innerChartHeight = 400; }
@@ -272,7 +271,7 @@ function drawChartLeftTop(filterData, opportunitiesData, stateNamesData, chartId
         },
         bar: {
             width: {
-                ratio: 0.5 // this makes bar width 50% of length between ticks
+                ratio: 0.8 // this makes bar width 50% of length between ticks
             }
         },
         legend:
@@ -2497,6 +2496,8 @@ function agencyOvrview() {
     var globalCustomer = [];
     var globalchartdata = [];
     var regulationdata = [];
+	
+	
 	//function called on apply button in state function
      function confirmFilters_Agency() {
         var request = new XMLHttpRequest();
@@ -2511,7 +2512,7 @@ function agencyOvrview() {
                 // getdropdowns(request.response);
                 drawTable_avgScoreCard(request.response);
                 drawTable_scoreCard(request.response);
-                // drawChartLeftTop(request.response, opportunitiesData, stateNamesData, "chartlefttop");
+                drawChartLeftTop(request.response, opportunitiesData, stateNamesData, "chartlefttop_agencyview");
 
             } else {
                 console.log("failure on status code");
@@ -2990,7 +2991,7 @@ function agencyOvrview() {
             opportunitiesData.push(parseInt(result_data[i].Opportunities))
         }
         var chart = c3.generate({
-            bindto: "#chartlefttop_agencyoverview",
+            bindto: "#chartlefttop_agencyview",
             data: {
                 x: 'StateNames',
                 columns: [
