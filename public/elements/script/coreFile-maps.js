@@ -1275,7 +1275,7 @@ src: 'https://openlayers.org/en/v4.2.0/examples/data/dot.png'
 }
 
 //Function to populate Building info tab 2 by requesting data based on  building selection
-function buildingMoreInfo(maxTotScore,facilityTotScore){
+function buildingMoreInfo(){
 	
 	 var scoresData = ['Scores'];
 	 var percentileData = ['Percentile Value'];
@@ -1575,7 +1575,7 @@ function buildingInf() {
 
                 d3.select("#moreinfolink").on("click", function () {
                     window.location.assign("/#/buildingmoreinfo");
-                    buildingMoreInfo(aName, fName, bName, sName, maxScoreArray[1], facilityScore[1]);
+                    buildingMoreInfo();
                 }
                 )
 
@@ -3042,4 +3042,266 @@ function agencyOvrview() {
     });
 	//populates agency vs Opportunities
    
+}
+
+//function to populate building comparison tab 2
+function buildingcomparison2(){
+	 var scoresData = ['Scores'];
+	 var percentileData = ['Percentile Value'];
+	 var buildingName1 = "Anchorage Federal Building", buildingName2 = "Tucson Federal Building";
+	
+	var buildingScore1;
+	var buildingScore2;
+	makeRequest('GET', '/Building12/'+buildingName1, function (err, data) {
+			result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+			
+			document.getElementById("facility1").innerHTML = result_data[0].Facility_Name
+			document.getElementById("building1").innerHTML = result_data[0].Building_Name
+			document.getElementById("state1").innerHTML = result_data[0].State_Name
+	 
+			buildingScore1 = result_data[0].;
+			
+			
+			
+			document.getElementById("eu1").innerHTML = result_data[0].Annual_Energy_Consumption_Mbtu
+			document.getElementById("ei1").innerHTML = result_data[0].Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft
+			
+			document.getElementById("ec1").innerHTML = result_data[0].Current_Customer
+			
+			
+			
+			document.getElementById("uesc1").innerHTML = result_data[0].Possible_Contracting_Vehicle
+			
+			document.getElementById("sqft1").innerHTML = result_data[0].Site_Sq_ft
+		
+			document.getElementById("utility1").innerHTML = result_data[0].Utility_Partner
+			});
+			
+	makeRequest('GET', '/Building12/'+buildingName2, function (err, data) {
+			result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+			
+			document.getElementById("facility2").innerHTML = result_data[0].Facility_Name
+			document.getElementById("building2").innerHTML = result_data[0].Building_Name
+			document.getElementById("state2").innerHTML = result_data[0].State_Name
+	 
+			buildingScore2 = ;
+			
+			document.getElementById("eu2").innerHTML = result_data[0].Annual_Energy_Consumption_Mbtu
+			document.getElementById("ei2").innerHTML = result_data[0].Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft
+			
+			document.getElementById("ec2").innerHTML = result_data[0].Current_Customer
+			
+			
+			
+			document.getElementById("uesc2").innerHTML = result_data[0].Possible_Contracting_Vehicle
+			
+			document.getElementById("sqft2").innerHTML = result_data[0].Site_Sq_ft
+		
+			document.getElementById("utility2").innerHTML = result_data[0].Utility_Partner
+			});
+	 var scoreType='Total_Mu_Sigma_Score'
+	 document.getElementById("comparisonddlist").addEventListener("px-dropdown-value-changed",function(evt){
+		scoreType = evt.detail.key
+		scoresData = ['Scores'];
+		percentileData = ['Percentile Value'];
+	 
+		makeRequest('GET', '/scorePercentileGraph/'+scoreType, function (err, data) {
+			result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+            
+			if(scoreType == 'Total_Mu_Sigma_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Total_Mu_Sigma_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Site_Area_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Site_Area_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Energy_Profile_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Energy_Profile_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Energy_Consumption_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Energy_Consumption_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+			else if(scoreType == 'Energy_Intensity_Score')
+				{
+				for(i=0;i<result_data.length;i++)
+					{
+					scoresData.push(result_data[i].Energy_Intensity_Score);
+					percentileData.push(result_data[i].cume_dist);
+					}
+				}
+	var chart1 = c3.generate({
+		bindto: "#bcgraph1",
+    data: {
+		x:'Scores',
+        columns: [
+            scoresData,
+            percentileData
+        ],
+        type: 'spline'
+		},
+	axis: {
+          x: {
+             label: {
+                    text: scoreType,
+                    position: 'outer-middle'
+                    }
+             },
+          y: {
+             label: {
+                    text: 'Percentile',
+                    position: 'outer-center'
+                    }
+             }
+		},
+	legend: {
+        show: false
+		}
+	});
+	
+	var percentileVal1 = percentileData[scoresData.indexOf(buildingScore1)]
+	var circles1 = d3.selectAll(".c3-circle").style("opacity", function(d){
+																if(d.value == percentileVal1) {return 1;}
+																else {return 0;}
+													})
+													
+	var chart2 = c3.generate({
+		bindto: "#bcgraph2",
+    data: {
+		x:'Scores',
+        columns: [
+            scoresData,
+            percentileData
+        ],
+        type: 'spline'
+		},
+	axis: {
+          x: {
+             label: {
+                    text: scoreType,
+                    position: 'outer-middle'
+                    }
+             },
+          y: {
+             label: {
+                    text: 'Percentile',
+                    position: 'outer-center'
+                    }
+             }
+		},
+	legend: {
+        show: false
+		}
+	});
+	
+	var percentileVal2 = percentileData[scoresData.indexOf(buildingScore2)]
+	var circles2 = d3.selectAll(".c3-circle").style("opacity", function(d){
+																if(d.value == percentileVal2) {return 1;}
+																else {return 0;}
+													})
+													
+	});
+	 });
+	 
+	 makeRequest('GET', '/scorePercentileGraph/'+scoreType, function (err, data) {
+			result_data=JSON.parse(data)
+            result_data=JSON.parse(result_data.data)
+            
+			for(i=0;i<result_data.length;i++)
+				{
+				scoresData.push(result_data[i].Total_Mu_Sigma_Score);
+				percentileData.push(result_data[i].cume_dist);
+				}
+		
+	var chart1 = c3.generate({
+		bindto: "#bcgraph1",
+    data: {
+		x:'Scores',
+        columns: [
+            scoresData,
+            percentileData
+        ],
+        type: 'spline'
+		},
+	axis: {
+          x: {
+             label: {
+                    text: scoreType,
+                    position: 'outer-middle'
+                    }
+             },
+          y: {
+             label: {
+                    text: 'Percentile',
+                    position: 'outer-center'
+                    }
+             }
+		},
+	legend: {
+        show: false
+		}
+	});
+	var percentileVal1 = percentileData[scoresData.indexOf(buildingScore1)]
+	var circles1 = d3.selectAll(".c3-circle").style("opacity", function(d){
+																if(d.value == percentileVal1) {return 1;}
+																else {return 0;}
+													})
+				
+	var chart2 = c3.generate({
+		bindto: "#bcgraph2",
+    data: {
+		x:'Scores',
+        columns: [
+            scoresData,
+            percentileData
+        ],
+        type: 'spline'
+		},
+	axis: {
+          x: {
+             label: {
+                    text: scoreType,
+                    position: 'outer-middle'
+                    }
+             },
+          y: {
+             label: {
+                    text: 'Percentile',
+                    position: 'outer-center'
+                    }
+             }
+		},
+	legend: {
+        show: false
+		}
+	});
+	
+	var percentileVal2 = percentileData[scoresData.indexOf(buildingScore2)]
+	var circles2 = d3.selectAll(".c3-circle").style("opacity", function(d){
+																if(d.value == percentileVal2) {return 1;}
+																else {return 0;}
+													})
+													
+	});
 }

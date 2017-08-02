@@ -163,7 +163,7 @@ app.get('/AllData', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query('SELECT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency" ,CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Utility_Partner" IS NULL THEN ' + nullTreatment + ' ELSE "Utility_Partner" end as "Utility_Partner" FROM "FedEff"."Data_Directory_v12_Predix_07312017" GROUP BY "Agency","State_Name","Utility_Partner" ORDER BY "Agency","State_Name","Utility_Partner" ASC', function (err, result) {
+		var query = client.query('SELECT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency" ,CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Utility_Partner" IS NULL THEN ' + nullTreatment + ' ELSE "Utility_Partner" end as "Utility_Partner" FROM "FedEff"."Data_Directory_v11_Predix_07312017" GROUP BY "Agency","State_Name","Utility_Partner" ORDER BY "Agency","State_Name","Utility_Partner" ASC', function (err, result) {
 			var response;
 
 			if (err) {
@@ -187,7 +187,7 @@ app.get('/AllData', function (req, res) {
 // 		if (err) {
 // 			return console.error('error fetching client from pool', err);
 // 		}
-// 		var query = client.query('SELECT "Agency",COUNT(*) as "No. Of Records" FROM "FedEff"."Data_Directory_v12_Predix_07312017" GROUP BY "Agency" ORDER BY "Agency"',  function (err, result) {
+// 		var query = client.query('SELECT "Agency",COUNT(*) as "No. Of Records" FROM "FedEff"."Data_Directory_v11_Predix_07312017" GROUP BY "Agency" ORDER BY "Agency"',  function (err, result) {
 // 		console.log(query);
 // 			var response;
 
@@ -214,7 +214,7 @@ app.get('/totalscore', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query('SELECT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency", COUNT(*) AS "Count" , AVG("Total_Mu_Sigma_Score") AS "Total_Score" FROM "FedEff"."Data_Directory_v12_Predix_07312017" GROUP BY "Agency" ORDER BY "Total_Score" DESC;', function (err, result) {
+		var query = client.query('SELECT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency", COUNT(*) AS "Count" , AVG("Total_Mu_Sigma_Score") AS "Total_Score" FROM "FedEff"."Data_Directory_v11_Predix_07312017" GROUP BY "Agency" ORDER BY "Total_Score" DESC;', function (err, result) {
 
 			var response;
 
@@ -238,7 +238,7 @@ app.get('/scorecard', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query('SELECT DISTINCT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Stage_1_2_GHG_emissions", "Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy" FROM "FedEff"."Data_Directory_v12_Predix_07312017" ORDER BY "Agency" ASC', function (err, result) {
+		var query = client.query('SELECT DISTINCT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Stage_1_2_GHG_emissions", "Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy" FROM "FedEff"."Data_Directory_v11_Predix_07312017" ORDER BY "Agency" ASC', function (err, result) {
 
 			var response;
 
@@ -387,7 +387,7 @@ app.post('/scoreCardFiltered', function (req, res) {
         if (err) {
             return console.error('error fetching client from pool', err);
         }
-        var query = client.query(' SELECT DISTINCT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency", "Stage_1_2_GHG_emissions", "Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy" FROM "FedEff"."Data_Directory_v12_Predix_07312017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Agency" ASC', function (err, result) {
+        var query = client.query(' SELECT DISTINCT CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency", "Stage_1_2_GHG_emissions", "Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy" FROM "FedEff"."Data_Directory_v11_Predix_07312017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Agency" ASC', function (err, result) {
             var response;
 
             if (err) {
@@ -536,7 +536,7 @@ app.post('/DataTableFiltered', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score","Latitude","Longitude" FROM "FedEff"."Data_Directory_v12_Predix_07312017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Total_Mu_Sigma_Score" DESC', function (err, result) {
+		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score","Latitude","Longitude" FROM "FedEff"."Data_Directory_v11_Predix_07312017" WHERE "Agency" IN' + agencyOutput + 'AND "State_Name" IN' + stateOutput + 'AND "Utility_Partner" IN' + utilityOutput + 'AND "Current_Customer" IN' + customerOutput + 'AND "Stage_1_2_GHG_emissions" IN' + stageOutput + 'AND "Stage_3_GHG_emissions" IN' + stage3Output + 'AND "Usage_of_renewable_energy" IN' + renewableOutput + 'AND "Fuelcell_Flag" IN' + fuelOutput + 'AND "Battery_Flag" IN' + batteryOutput + 'AND "Solar_Flag" IN' + solarOutput + 'AND "Cogen_Flag" IN' + cogenOutput + 'AND "Emgen_Flag" IN' + emgenOutput + 'AND "Data_Grade" IN' + dataOutput + 'AND "Reduction_in_Energy_Intensity" IN' + energyOutput + 'AND "Possible_Contracting_Vehicle" IN' + contractOutput + 'AND "Gross_Sq_Ft" BETWEEN ' + startftvalue + ' AND ' + endftvalue + ' ORDER BY "Total_Mu_Sigma_Score" DESC', function (err, result) {
 			var response;
 
 			if (err) {
@@ -564,7 +564,35 @@ app.get('/BuildingMoreInfoBdngLevel/:buildingName', function (req, res) {
 			return console.error('error fetching client from pool', err);
 		}
 
-		var query = client.query(' SELECT "Agency","Facility_Name","Building_Name","State_Name","Total_Mu_Sigma_Score","Annual_Energy_Consumption_Mbtu","Energy_Intensity_Score","Energy_Consumption_Score","Site_Area_Score","Number_of_Buildings","Number_Of_Buildings_Metered_For_Electricity","Site_Sq_ft","Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft","Peak_kW","Annual_Energy_Spending_Comm","Data_added_on","Address","Utility_Partner","Possible_Contracting_Vehicle","Contact_Name","Contact_Number","Interval_data_availability","Current_Customer" FROM "FedEff"."Data_Directory_v12_Predix_07312017" WHERE "Building_Name" = ' + buildingNameString, function (err, result) {
+		var query = client.query(' SELECT "Agency","Facility_Name","Building_Name","State_Name","Total_Mu_Sigma_Score","Annual_Energy_Consumption_Mbtu","Energy_Intensity_Score","Energy_Consumption_Score","Site_Area_Score","Number_of_Buildings","Number_Of_Buildings_Metered_For_Electricity","Site_Sq_ft","Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft","Peak_kW","Annual_Energy_Spending_Comm","Data_added_on","Address","Utility_Partner","Possible_Contracting_Vehicle","Contact_Name","Contact_Number","Interval_data_availability","Current_Customer" FROM "FedEff"."Data_Directory_v11_Predix_07312017" WHERE "Building_Name" = ' + buildingNameString, function (err, result) {
+
+
+			var response;
+
+			if (err) {
+				return console.error('error running query', err);
+			}
+			res.send({
+				data: JSON.stringify(result.rows)
+			});
+		});
+		query.on('end', function () {
+			client.end();
+			res.end();
+		});
+	});
+});
+
+app.get('/Building12/:buildingName', function (req, res) {
+	var buildingName = req.params.buildingName;
+	var buildingNameString = '\'' + buildingName.toString() + '\''
+	var client = new pg.Client(conString);
+	client.connect(function (err, client, done) {
+		if (err) {
+			return console.error('error fetching client from pool', err);
+		}
+
+		var query = client.query(' SELECT "Facility_Name","Building_Name","State_Name","Utility_Partner","Possible_Contracting_Vehicle","Site_Sq_ft","Annual_Energy_Consumption_Mbtu","Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft","Current_Customer" FROM "FedEff"."Data_Directory_v11_Predix_07312017" WHERE "Building_Name" = ' + buildingNameString, function (err, result) {
 
 
 			var response;
@@ -592,7 +620,7 @@ app.get('/BuildingMoreInfoMaxMed', function (req, res) {
 		}
 
 
-		var query = client.query(' SELECT MAX("Total_Mu_Sigma_Score") AS "max_ts",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Total_Mu_Sigma_Score") AS "med_ts",MAX("Energy_Intensity_Score") AS "max_eis",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Energy_Intensity_Score") AS "med_eis",MAX("Energy_Consumption_Score") AS "max_ecs",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Energy_Consumption_Score") AS "med_ecs",MAX("Site_Area_Score") AS "max_sas",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Site_Area_Score") AS "med_sas",MAX("Number_of_Buildings") AS "max_nb",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Number_of_Buildings") AS "med_nb",MAX("Number_Of_Buildings_Metered_For_Electricity") AS "max_bme",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Number_Of_Buildings_Metered_For_Electricity") AS "med_bme",MAX("Site_Sq_ft") AS "max_ssf",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Site_Sq_ft") AS "med_ssf",MAX("Annual_Energy_Consumption_Mbtu") AS max_aec,PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Annual_Energy_Consumption_Mbtu") AS "med_aec",MAX("Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft") AS "max_ei",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft") AS "med_ei",MAX("Peak_kW") AS "max_pl",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Peak_kW") AS "med_pl",MAX("Annual_Energy_Spending_Comm") AS "max_aes",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Annual_Energy_Spending_Comm") AS "med_aes",MAX("Data_added_on") AS "max_tsdp" FROM "FedEff"."Data_Directory_v12_Predix_07312017" ', function (err, result) {
+		var query = client.query(' SELECT MAX("Total_Mu_Sigma_Score") AS "max_ts",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Total_Mu_Sigma_Score") AS "med_ts",MAX("Energy_Intensity_Score") AS "max_eis",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Energy_Intensity_Score") AS "med_eis",MAX("Energy_Consumption_Score") AS "max_ecs",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Energy_Consumption_Score") AS "med_ecs",MAX("Site_Area_Score") AS "max_sas",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Site_Area_Score") AS "med_sas",MAX("Number_of_Buildings") AS "max_nb",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Number_of_Buildings") AS "med_nb",MAX("Number_Of_Buildings_Metered_For_Electricity") AS "max_bme",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Number_Of_Buildings_Metered_For_Electricity") AS "med_bme",MAX("Site_Sq_ft") AS "max_ssf",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Site_Sq_ft") AS "med_ssf",MAX("Annual_Energy_Consumption_Mbtu") AS max_aec,PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Annual_Energy_Consumption_Mbtu") AS "med_aec",MAX("Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft") AS "max_ei",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft") AS "med_ei",MAX("Peak_kW") AS "max_pl",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Peak_kW") AS "med_pl",MAX("Annual_Energy_Spending_Comm") AS "max_aes",PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER by "Annual_Energy_Spending_Comm") AS "med_aes",MAX("Data_added_on") AS "max_tsdp" FROM "FedEff"."Data_Directory_v11_Predix_07312017" ', function (err, result) {
 
 
 			var response;
@@ -621,7 +649,7 @@ app.get('/scorePercentileGraph/:scoreType', function (req, res) {
 			return console.error('error fetching client from pool', err);
 		}
 
-		var query = client.query(' SELECT \"'+scoreType+'\",CUME_DIST() OVER(ORDER BY \"'+scoreType+'\") FROM "FedEff"."Data_Directory_v12_Predix_07312017" ', function (err, result) {
+		var query = client.query(' SELECT \"'+scoreType+'\",CUME_DIST() OVER(ORDER BY \"'+scoreType+'\") FROM "FedEff"."Data_Directory_v11_Predix_07312017" ', function (err, result) {
 
 			var response;
 
@@ -650,7 +678,7 @@ app.get('/buildingInf/:buildingName', function (req, res) {
 			return console.error('error fetching client from pool', err);
 		}
 
-		var query = client.query(' SELECT "Agency","Facility_Name","Building_Name","State_Name","Total_Mu_Sigma_Score","PTA_Score","Energy_Profile_Score","Potential_DE_Score","Stage_1_2_GHG_emissions","Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy","Reason_Code_1","Reason_Code_2","Battery_Flag","Cogen_Flag","Emgen_Flag","Fuelcell_Flag","Solar_Flag" FROM "FedEff"."Data_Directory_v12_Predix_07312017" WHERE "Building_Name" = ' + buildingNameString, function (err, result) {
+		var query = client.query(' SELECT "Agency","Facility_Name","Building_Name","State_Name","Total_Mu_Sigma_Score","PTA_Score","Energy_Profile_Score","Potential_DE_Score","Stage_1_2_GHG_emissions","Stage_3_GHG_emissions","Reduction_in_Energy_Intensity","Usage_of_renewable_energy","Reason_Code_1","Reason_Code_2","Battery_Flag","Cogen_Flag","Emgen_Flag","Fuelcell_Flag","Solar_Flag" FROM "FedEff"."Data_Directory_v11_Predix_07312017" WHERE "Building_Name" = ' + buildingNameString, function (err, result) {
 
 			var response;
 
@@ -676,7 +704,7 @@ app.get('/buildingInfMaxScores', function (req, res) {
 			return console.error('error fetching client from pool', err);
 		}
 
-		var query = client.query(' SELECT MAX("Total_Mu_Sigma_Score") AS "score1",MAX("PTA_Score") AS "score2",MAX("Energy_Profile_Score") AS "score3",MAX("Potential_DE_Score") AS "score4" FROM "FedEff"."Data_Directory_v12_Predix_07312017" ', function (err, result) {
+		var query = client.query(' SELECT MAX("Total_Mu_Sigma_Score") AS "score1",MAX("PTA_Score") AS "score2",MAX("Energy_Profile_Score") AS "score3",MAX("Potential_DE_Score") AS "score4" FROM "FedEff"."Data_Directory_v11_Predix_07312017" ', function (err, result) {
 
 			var response;
 
@@ -700,7 +728,7 @@ app.get('/DataTable', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score"  FROM "FedEff"."Data_Directory_v12_Predix_07312017"  ORDER BY "Total_Mu_Sigma_Score" LIMIT 1000;', function (err, result) {
+		var query = client.query(' SELECT CASE WHEN "Facility_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Facility_Name" end as "Facility_Name",CASE WHEN "Building_Name" IS NULL THEN ' + nullTreatment + ' ELSE "Building_Name" end as "Building_Name",CASE WHEN "State_Name" IS NULL THEN ' + nullTreatment + ' ELSE "State_Name" end as "State_Name",CASE WHEN "Agency" IS NULL THEN ' + nullTreatment + ' ELSE "Agency" end as "Agency","Total_Mu_Sigma_Score"  FROM "FedEff"."Data_Directory_v11_Predix_07312017"  ORDER BY "Total_Mu_Sigma_Score" LIMIT 1000;', function (err, result) {
 			var response;
 			if (err) {
 				return console.error('error running query', err);
@@ -722,7 +750,7 @@ app.get('/chartTable', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT "State_Name",COUNT(*) as "Opportunities" FROM "FedEff"."Data_Directory_v12_Predix_07312017" GROUP BY "State_Name" ORDER BY "Opportunities" DESC', function (err, result) {
+		var query = client.query(' SELECT "State_Name",COUNT(*) as "Opportunities" FROM "FedEff"."Data_Directory_v11_Predix_07312017" GROUP BY "State_Name" ORDER BY "Opportunities" DESC', function (err, result) {
 			var response;
 			if (err) {
 				return console.error('error running query', err);
@@ -744,7 +772,7 @@ app.get('/chartTable_Agency', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT "Agency",COUNT(*) as "Opportunities" FROM "FedEff"."Data_Directory_v12_Predix_07312017" GROUP BY "Agency" ORDER BY "Opportunities" DESC;', function (err, result) {
+		var query = client.query(' SELECT "Agency",COUNT(*) as "Opportunities" FROM "FedEff"."Data_Directory_v11_Predix_07312017" GROUP BY "Agency" ORDER BY "Opportunities" DESC;', function (err, result) {
 			var response;
 			if (err) {
 				return console.error('error running query', err);
@@ -766,7 +794,7 @@ app.get('/LongLat', function (req, res) {
 		if (err) {
 			return console.error('error fetching client from pool', err);
 		}
-		var query = client.query(' SELECT "Latitude","Longitude","Agency" FROM "FedEff"."Data_Directory_v12_Predix_07312017" LIMIT 2000;', function (err, result) {
+		var query = client.query(' SELECT "Latitude","Longitude","Agency" FROM "FedEff"."Data_Directory_v11_Predix_07312017" LIMIT 2000;', function (err, result) {
 			var response;
 			if (err) {
 				return console.error('error running query', err);
