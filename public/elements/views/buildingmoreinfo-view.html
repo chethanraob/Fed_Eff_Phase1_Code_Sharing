@@ -49,7 +49,7 @@
 						<h4><b>State</b></h4>
 					</div>
 					<div class="col-sm-3 col-md-3 col-xs-3 col-lg-3 padding-left-10">
-						<div id="agency-name-mi">
+						<div id="agency-name-mi1">
 							<h5>agency name</h5>
 						</div>
 					</div>
@@ -133,9 +133,9 @@
 					</div>
 					<div class="row rowpanel">
 						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Base Load (kW)</div>
-						<div id="max-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-						<div id="med-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-						<div id="fv-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="max-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel"> </div>
+						<div id="med-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel"> </div>
+						<div id="fv-bl" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel"> </div>
 					</div>
 					<div class="row rowpanel">
 						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Peak Load (kW)</div>
@@ -152,7 +152,7 @@
 					<div class="row rowpanel">
 						<div class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">Time Stamp of Data Publish</div>
 						<div id="max-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
-						<div id="med-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
+						<div id="med-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel"> </div>
 						<div id="fv-tsdp" class="col-sm-3 col-md-3  col-xs-3 col-lg-3 colpanel">0</div>
 					</div>
 
@@ -163,8 +163,8 @@
 
 					</div>
 					<div id="svpdropdown" class="scoredd">
-						<px-dropdown display-value="Total Mu Sigma Score">
-							<px-dropdown-content extend-dropdown="true" extend-dropdown-by="25" max-cont-character-width="10" items='[{"key":0, "val": "Total Mu Sigma Score"}, {"key":1, "val": "Sq. Ft. Score"}, {"key":2, "val": "Energy Profile Score"}, {"key":3, "val": "Energy Consumption Score"}, {"key":4, "val": "Energy Intensity Score"}]'>
+						<px-dropdown id = "scorevspercentile" display-value="Total Mu Sigma Score">
+							<px-dropdown-content extend-dropdown="true" extend-dropdown-by="25" max-cont-character-width="10" items='[{"key":"Total_Mu_Sigma_Score", "val": "Total Mu Sigma Score"}, {"key":"Site_Area_Score", "val": "Sq. Ft. Score"}, {"key":"Energy_Profile_Score", "val": "Energy Profile Score"}, {"key":"Energy_Consumption_Score", "val": "Energy Consumption Score"}, {"key":"Energy_Intensity_Score", "val": "Energy Intensity Score"}]'>
 							</px-dropdown-content>
 						</px-dropdown>
 					</div>
@@ -175,7 +175,7 @@
 					</div>
 					<div class="row rowpanelright">
 						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">Utility</div>
-						<div id="utility" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel">util</div>
+						<div id="utility" class="col-sm-7 col-md-7  col-xs-7 col-lg-7 colpanel"> </div>
 					</div>
 					<div class="row rowpanelright">
 						<div class="col-sm-5 col-md-5  col-xs-5 col-lg-5 colpanel">UESC/ESPC</div>
