@@ -2429,7 +2429,6 @@ function agencyOvrview() {
                 // document.getElementById('agency-state-name-content').style.opacity = '1';
 
                 // getdropdowns(request.response);
-                drawTable_avgScoreCard(request.response);
                 drawTable_scoreCard(request.response);
                 // drawChartLeftTop(request.response, opportunitiesData, stateNamesData, "chartlefttop");
 
@@ -2507,9 +2506,94 @@ function agencyOvrview() {
         // document.getElementById('mid-table-loader').style.opacity = '1';
         // document.getElementById('agency-state-name-content').style.opacity = '0.2';
         request.send(JSON.stringify(requestData));
-    };
+        var request1 = new XMLHttpRequest();
+        var datapointsUrl = "/totalScoreFiltered";
+        request1.open('POST', datapointsUrl, true);
+        request1.setRequestHeader('Content-Type', 'application/json');
+        request1.onload = function (response) {
+            if (request1.status >= 200 && request1.status < 400) {
+                // document.getElementById('mid-table-loader').style.opacity = '0';
+                // document.getElementById('agency-state-name-content').style.opacity = '1';
 
-    
+                // getdropdowns(request.response);
+                drawTable_avgScoreCard(request1.response);
+                // drawChartLeftTop(request.response, opportunitiesData, stateNamesData, "chartlefttop");
+
+            } else {
+                console.log("failure on status code");
+            }
+
+
+        };
+        request.onerror = function () {
+            console.log("failure after success code");
+        };
+
+        if (selectedAgency == "") {
+            selectedAgency = globalAgency
+        }
+
+        if (selectedState == "") {
+            selectedState = globalState
+        }
+        if (selectedUtility == "") {
+            selectedUtility = globalUtility
+        }
+        if (selectedCustomer == "") {
+            selectedCustomer = globalCustomer
+        }
+
+        if (selectedSolar == "") {
+            selectedSolar = globalSolar
+        }
+        if (selectedStage == "") {
+            selectedStage = globalStage
+        }
+        if (selectedStage3 == "") {
+            selectedStage3 = globalStage3
+        }
+
+        if (selectedRenewable == "") {
+            selectedRenewable = globalRenewable
+        }
+        if (selectedBattery == "") {
+            selectedBattery = globalBattery
+        }
+        if (selectedFuel == "") {
+            selectedFuel = globalFuel
+        }
+
+        if (selectedEmgen == "") {
+            selectedEmgen = globalEmgen
+        }
+        if (selectedCogen == "") {
+            selectedCogen = globalCogen
+        }
+        if (selectedContract == "") {
+            selectedContract = globalContract
+        }
+
+        if (selectedData == "") {
+            selectedData = globalData
+        }
+        if (selectedEnergy == "") {
+            selectedEnergy = globalEnergy
+        }
+
+		var selectedStartftvalue = document.getElementById("grossSqft_Agency").value;
+	    var selectedEndftvalue = document.getElementById("grossSqft_Agency").endValue;
+
+
+          var requestData = {
+            "agency": selectedAgency, "state": selectedState, "utility": selectedUtility,
+            "customer": selectedCustomer,"startftvalue": selectedStartftvalue, "endftvalue": selectedEndftvalue, "contract": selectedContract, "battery": selectedBattery, "emgen": selectedEmgen,
+            "cogen": selectedCogen, "fuelcell": selectedFuel, "renewable": selectedRenewable, "solar": selectedSolar,
+            "stage": selectedStage, "stage3": selectedStage3, "data": selectedData, "energy": selectedEnergy
+        };
+        // document.getElementById('mid-table-loader').style.opacity = '1';
+        // document.getElementById('agency-state-name-content').style.opacity = '0.2';
+        request1.send(JSON.stringify(requestData));
+};
     document.getElementById("applyButton_Agency").addEventListener("click", confirmFilters_Agency);
 
     document.getElementById("agency_Agency").addEventListener("px-dropdown-checkbox-changed", filterdrop);
@@ -2798,14 +2882,10 @@ function agencyOvrview() {
     }
     );
 	 makeRequest('GET', '/totalscore', function (err, data) {
-        result_data = JSON.parse(data)
-        result_data = JSON.parse(result_data.data)
-        drawTable_avgScoreCard(result_data);
+        drawTable_avgScoreCard(data);
     });
     makeRequest('GET', '/scorecard', function (err, data) {
-        result_data = JSON.parse(data)
-        result_data = JSON.parse(result_data.data)
-        drawTable_scoreCard(result_data);
+        drawTable_scoreCard(data);
     });
      function drawTable_scoreCard(data) {
         var score_color = {
@@ -2814,7 +2894,7 @@ function agencyOvrview() {
             'Red': 'Red',
             'Not Available': 'Grey'
         };
-        //data = JSON.parse(JSON.parse(data).data);
+        data = JSON.parse(JSON.parse(data).data);
         console.log(data);
         var nameMapping = {
             Agency: "Agency",
@@ -2847,7 +2927,9 @@ function agencyOvrview() {
                 return 'white';		
             }		
         }).style('width', function (d) {		
-            return '100px';		
+            return '137px';		
+        }).style('text-align', function(d) {
+            return 'center';
         });		
         dataCells.append('div');		
         dataCells.select('div').style('height', function (d) {		
@@ -2870,7 +2952,7 @@ function agencyOvrview() {
 	//function to populate middle table in the agency
 	
     function drawTable_avgScoreCard(data) {
-        //data = JSON.parse(JSON.parse(data).data);
+        data = JSON.parse(JSON.parse(data).data);
         var nameMapping = {
             Agency: "Agency",
             Total_Score: "Score",
@@ -2893,7 +2975,9 @@ function agencyOvrview() {
         dataCells.enter().append("td").text(function (d, i) {
             return d;
         }).style('width', function (d) {
-          return '33%';
+          return '130px';
+        }).style('text-align', function(d) {
+            return 'center';
         });
     };
 
