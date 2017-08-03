@@ -3140,11 +3140,11 @@ function buildingcomparison2(){
 			result_data=JSON.parse(data)
             result_data=JSON.parse(result_data.data)
 			
-			document.getElementById("facility1").innerHTML = result_data[0].Facility_Name
-			document.getElementById("building1").innerHTML = result_data[0].Building_Name
+			document.getElementById("facility1").innerHTML = result_data[0].Facility_Name+" "
+			document.getElementById("building1").innerHTML = result_data[0].Building_Name+" "
 			document.getElementById("state1").innerHTML = result_data[0].State_Name
 	 
-			buildingScore1 = result_data[0].;
+			//buildingScore1 = result_data[0].;
 			
 			
 			
@@ -3170,7 +3170,7 @@ function buildingcomparison2(){
 			document.getElementById("building2").innerHTML = result_data[0].Building_Name
 			document.getElementById("state2").innerHTML = result_data[0].State_Name
 	 
-			buildingScore2 = ;
+			//buildingScore2 = ;
 			
 			document.getElementById("eu2").innerHTML = result_data[0].Annual_Energy_Consumption_Mbtu
 			document.getElementById("ei2").innerHTML = result_data[0].Annual_Energy_Use_Intensity_Kbtu_per_Sq_Ft
